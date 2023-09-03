@@ -13,9 +13,18 @@ typedef unsigned long long ull;
 int n;
 
 int main() {
-    
-	scanf("%d", &n);
-    printf("%d\n", n);
-
-	return 0;
+    long long n, sum = 0, s = 1;
+    scanf("%lld", &n);
+    while(n)
+    {
+        if(n & 1)
+        {
+            sum += s;
+        }
+        s *= 3;
+        n >>= 1;
+    }
+    printf("%lld\n", sum);
+   
+    return 0;
 }
