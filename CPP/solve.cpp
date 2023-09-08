@@ -11,23 +11,12 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 #define NOP ;
-#define MAXN 100000
+#define MAXV INT32_MAX
 
-int n, k, m;
-int x, y, g;
-bool isy, isp;
-
-int dig(int a) {
-	if (a >= 0 && a <= 9) {
-		return a;
-	}
-	
-	int sum = 0;
-	while(a > 0) {
-		sum += x%10;
-	}
-	return dig(sum);
-}
+int n, input;
+int left_max = 0;
+int right_max = 0;
+int total = 0;
 
 int main() {
 	ios_base::sync_with_stdio(0);
@@ -35,36 +24,24 @@ int main() {
 
 	cin >> n;
 	for(int i=0; i<n; i++) {
-		cin >> k >> m;
+		cin >> input;
+		if(input == 1) left_max++;
+		else left_max--;
 		
-		x = y = 0; g = 1;
-		isy = isp = true;
-		for(int j=1; j<=k; j++) {
-			int tmp = dig(g);
-			g *= m;
-			if(isy && isp) {
-				y += tmp;
-				isy = false;
-				isp = true;
-			}
-			else if(!isy && isp) {
-				x += tmp;
-				isy = true;
-				isp = false;
-			}
-			else if(isy && !isp) {
-				y -= tmp;
-				isy = false;
-				isp = false;
-			}
-			else if(!isy && !isp) {
-				x -= tmp;
-				isy = true;
-				isp = true;
-			}
-			cout << x << " " << y << endl;
-		}
+		if(input == 2) right_max++;
+		else right_max--;
+
+		if(total < left_max || total < right_max)
+			total = max(left_max, right_max);
+
+		if (left_max < 0)
+			left_max = 0;
+		
+		if (right_max < 0)
+			right_max = 0;
 	}
+
+	cout << total << endl;
 
 	return 0;
 }
