@@ -1,3 +1,8 @@
+/**************************************************************
+* SOLVED	:	1
+* CURRENT	: 	15881(clear)
+* NEXT 		: 	15720
+***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <algorithm>
