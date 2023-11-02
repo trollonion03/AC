@@ -1,6 +1,6 @@
 /**************************************************************
 * SOLVED	:	1
-* CURRENT	: 	15881(clear)
+* CURRENT	: 	10769
 * NEXT 		: 	15720
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -18,23 +18,38 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 100000
 
-int n;
-int cnt = 0;
-string input;
+string str;
+int cmp;
+bool flag = false;
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> input;
-	for(int i=0; i<n; i++) {
-		if(input.substr(i, 4) == "pPAp") {
-			cnt++;
-			i += 3;
+	cin >> str;
+	for(int i=0; i < str.size(); i++) {
+		if(str.substr(i, 3) == ":-)") {
+			if(!flag) flag = true;
+			cmp++;
+			i += 2;
+		}
+		else if(str.substr(i, 3) == ":-(") {
+			if(!flag) flag = true;
+			cmp--;
+			i += 2;
 		}
 	}
 
-	cout << cnt << endl;
+	if(flag) {
+		if(cmp > 0) cout << "happy";
+		else if(cmp < 0) cout << "sad";
+		else if(cmp == 0) cout << "unsure";
+	}
+	else {
+		cout << "none";
+	}
+
+	cout << "\n";
 
 	return 0;
 }
