@@ -1,6 +1,5 @@
 /**************************************************************
-* SOLVED	:	1
-* CURRENT	: 	16496
+* CURRENT	: 	1931
 * NEXT 		: 	15720
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -19,11 +18,20 @@ typedef unsigned long long ull;
 #define MAXN 100000
 
 int n;
-long long result;
-string input[101];
+int result;
 
-int cmp(string a, string b) {
-	return a + b > b + a;
+typedef struct a {
+	uint32_t s;
+	uint32_t e;
+} info;
+
+bool cmp (info& a, info& b) {
+	if (a.e < b.e)
+		return true;
+	else if (a.e == b.e)
+		return (a.s < b.s);
+	else
+		return false;
 }
 
 int main() {
@@ -31,18 +39,27 @@ int main() {
 	cin.tie(0); cout.tie(0);
 
 	cin >> n;
+	info array[MAXN];
 	for(int i=0; i<n; i++) {
-		cin >> input[i];
+		cin >> array[i].s >> array[i].e;
 	}
 
-	sort(input, input + n, cmp);
+	sort(array, array+n, cmp);
 
-	string s_res = "";
-	for (int j = 0; j < n; j++) {
-		s_res += input[j];
+	int cnt = 1;
+	uint32_t tmp = array[0].e;
+
+	for (int i=1; i<n; i++) {
+		if(array[i].s < tmp) {
+			continue;
+		}
+		else {
+			tmp = array[i].e;
+			cnt++;
+		}
 	}
 
-	cout << s_res << endl;
+	cout << cnt << endl;
 
 	return 0;
 }
