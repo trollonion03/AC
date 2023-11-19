@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1931
+* CURRENT	: 	2903
 * NEXT 		: 	15720
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -18,48 +18,19 @@ typedef unsigned long long ull;
 #define MAXN 100000
 
 int n;
-int result;
-
-typedef struct a {
-	uint32_t s;
-	uint32_t e;
-} info;
-
-bool cmp (info& a, info& b) {
-	if (a.e < b.e)
-		return true;
-	else if (a.e == b.e)
-		return (a.s < b.s);
-	else
-		return false;
-}
+int cnt = 2;
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
 	cin >> n;
-	info array[MAXN];
+
 	for(int i=0; i<n; i++) {
-		cin >> array[i].s >> array[i].e;
+		cnt += cnt-1;
 	}
 
-	sort(array, array+n, cmp);
-
-	int cnt = 1;
-	uint32_t tmp = array[0].e;
-
-	for (int i=1; i<n; i++) {
-		if(array[i].s < tmp) {
-			continue;
-		}
-		else {
-			tmp = array[i].e;
-			cnt++;
-		}
-	}
-
-	cout << cnt << endl;
-
+	cout << cnt*cnt << endl;
+	
 	return 0;
 }
