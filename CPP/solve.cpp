@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	2606
+* CURRENT	: 	1012
 * NEXT 		: 	15720
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -19,12 +19,14 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 100000
 
-bool visited[101]; 				//방문 여부 저장
-vector<int> graph[101]; 		//vector 배열 생성(인접 노드에 대한 정보 저장)
-int cnt = 0;
-int n, m, a, b;
+bool visited[51][51];
+bool a[51][51];
 
-void dfs(int x) {
+int cnt = 0;
+int n, m, c, t;
+
+
+void dfs(int y, int x) {
 	visited[x] = true; 
 	cout << x << " ";
 	for(int i=0; i<graph[x].size(); i++) { //인접 노드 탐색
@@ -40,8 +42,9 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m;
-	for(int i=0; i<m; i++) {
+	cin >> t;
+	cin >> n >> m >> c;
+	for(int i=0; i<t; i++) {
 		cin >> a >> b;
 		graph[a].push_back(b);
 		graph[b].push_back(b);
