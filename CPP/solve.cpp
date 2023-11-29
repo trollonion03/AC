@@ -7,7 +7,9 @@
 #include <algorithm>
 #include <memory.h>
 #include <cstring>
+#include <cstdio>
 #include <string>
+#include <vector>
 
 using namespace std;
 constexpr int INF = 0x3f3f3f3f;
@@ -17,58 +19,36 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 100000
 
-int n, k, m;
-int x, y, g;
-bool isy, isp;
+bool visited[101]; 				//방문 여부 저장
+vector<int> graph[101]; 		//vector 배열 생성(인접 노드에 대한 정보 저장)
+int cnt = 0;
+int n, m, a, b;
 
-int dig(int a) {
-	if (a >= 0 && a <= 9) {
-		return a;
+void dfs(int x) {
+	visited[x] = true; 
+	cout << x << " ";
+	for(int i=0; i<graph[x].size(); i++) { //인접 노드 탐색
+		int y = graph[x][i];
+		if(!visited[y])	{	//방문하지 않으면, 해당 노드에 대한 탐색 시작
+			dfs(y); //재귀적 방문
+			cnt++;
+		}
 	}
-	
-	int sum = 0;
-	while(a > 0) {
-		sum += x%10;
-	}
-	return dig(sum);
 }
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n;
-	for(int i=0; i<n; i++) {
-		cin >> k >> m;
-		
-		x = y = 0; g = 1;
-		isy = isp = true;
-		for(int j=1; j<=k; j++) {
-			int tmp = dig(g);
-			g *= m;
-			if(isy && isp) {
-				y += tmp;
-				isy = false;
-				isp = true;
-			}
-			else if(!isy && isp) {
-				x += tmp;
-				isy = true;
-				isp = false;
-			}
-			else if(isy && !isp) {
-				y -= tmp;
-				isy = false;
-				isp = false;
-			}
-			else if(!isy && !isp) {
-				x -= tmp;
-				isy = true;
-				isp = true;
-			}
-			cout << x << " " << y << endl;
-		}
+	cin >> n >> m;
+	for(int i=0; i<m; i++) {
+		cin >> a >> b;
+		graph[a].push_back(b);
+		graph[b].push_back(b);
 	}
 
+	dfs(1); //최초 노드 방문
+	printf("%d\n", cnt);
+	
 	return 0;
 }
