@@ -22,18 +22,26 @@ typedef unsigned long long ull;
 bool visited[51][51];
 bool a[51][51];
 
+int dx[4]{0, 0, 1, -1};
+int dy[4]{1, -1, 0, 0};
+
 int cnt = 0;
 int n, m, c, t;
+int x, y;
 
 
 void dfs(int y, int x) {
-	visited[x] = true; 
-	cout << x << " ";
-	for(int i=0; i<graph[x].size(); i++) { //인접 노드 탐색
-		int y = graph[x][i];
-		if(!visited[y])	{	//방문하지 않으면, 해당 노드에 대한 탐색 시작
-			dfs(y); //재귀적 방문
-			cnt++;
+	if(visited[y][x])
+		return;
+
+	for(int i=0; i<4; i++) {
+		int nx = x + dx[i];
+		int ny = y + dy[i];
+
+		if(nx >= 0 && ny >= 0 && nx < n && ny < m) {
+			if(a[ny][nx]) {
+				dfs(ny, nx);
+			}
 		}
 	}
 }
@@ -43,15 +51,21 @@ int main() {
 	cin.tie(0); cout.tie(0);
 
 	cin >> t;
-	cin >> n >> m >> c;
 	for(int i=0; i<t; i++) {
-		cin >> a >> b;
-		graph[a].push_back(b);
-		graph[b].push_back(b);
+		cin >> n >> m >> c;
+		for(int j=0; j<c; j++) {
+			cin >> x >> y;
+			a[y][x] = 1;
+		}
+		for(int j=0; j<n; j++) {
+			for(int k=0; k<m; k++) {
+				if(a[j][k] && !visited[j][k]) {
+					dfs(j, k);
+					cnt++;
+				}
+			}
+		}
+		cout << cnt << endl;
 	}
-
-	dfs(1); //최초 노드 방문
-	printf("%d\n", cnt);
-	
 	return 0;
 }
