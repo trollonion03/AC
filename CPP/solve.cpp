@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	2869
+* CURRENT	: 	1926
 * NEXT 		: 	15720
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <memory.h>
 #include <cstring>
-#include <cstdio>
 #include <string>
 #include <vector>
 
@@ -19,18 +18,64 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 100000
 
-int a,b,v;
-int day = 0;
+bool visited[501][501];
+bool a[501][501];
+vector<int> vec;
+
+int dy[4]{0, 0, 1, -1};
+int dx[4]{1, -1, 0, 0};
+
+int cnt = 0;
+int lw = 0;
+int n, m;
+
+void dfs(int y, int x) {
+	visited[y][x] = true;
+
+	for(int i=0; i<4; i++) {
+		int nx = x + dx[i];
+		int ny = y + dy[i];
+
+		if (ny < 0 || nx < 0 || ny >= n || nx >= m)
+            continue;
+        if (a[ny][nx] == 1 && visited[ny][nx] == 0) {
+            visited[ny][nx] = true;
+            lw++;
+            dfs(ny, nx);
+        }
+	}
+}
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> a >> b >> v;
-	
-	day = (v - b - 1) / (a - b) + 1;
+	cin >> n >> m;
 
-	cout << day << endl;
+	for(int i=0; i<n; i++) {
+		for(int j=0; j<m; j++) {
+			cin >> a[i][j];
+		}
+	}
+
+	for(int i=0; i<n; i++) {
+		for(int j=0; j<m; j++) {
+			if(a[i][j] && !visited[i][j]) {
+				dfs(i, j);
+				cnt++;
+				vec.push_back(lw);
+				lw = 1;
+			}
+		}
+	}
+
+	sort(vec.rbegin(), vec.rend());
+	cout << cnt << endl;
+	
+	if(cnt > 0)
+		cout << vec[0] << endl;
+	else
+		cout << 0 << endl;
 
 	return 0;
 }
