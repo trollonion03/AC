@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1926
+* CURRENT	: 	2644
 * NEXT 		: 	15720
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -18,31 +18,25 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 100000
 
-bool visited[501][501];
-bool a[501][501];
-vector<int> vec;
-
-int dy[4]{0, 0, 1, -1};
-int dx[4]{1, -1, 0, 0};
+bool visited[101];
+vector<int> a[101];
 
 int cnt = 0;
-int lw = 0;
-int n, m;
+int n, m, x, y;
+int tgt[2];
 
-void dfs(int y, int x) {
-	visited[y][x] = true;
+void dfs(int x, int y, int k) {
+	visited[x] = true;
 
-	for(int i=0; i<4; i++) {
-		int nx = x + dx[i];
-		int ny = y + dy[i];
+	if(x == y) {
+		cnt = k;
+	}
 
-		if (ny < 0 || nx < 0 || ny >= n || nx >= m)
-            continue;
-        if (a[ny][nx] == 1 && visited[ny][nx] == 0) {
-            visited[ny][nx] = true;
-            lw++;
-            dfs(ny, nx);
-        }
+	for(int i=0; i<a[x].size(); i++) {
+		int tmp = a[x][i];
+		if(!visited[tmp]) {
+			dfs(tmp, y, k+1);
+		}
 	}
 }
 
@@ -50,32 +44,21 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m;
-
+	cin >> n;
+	cin >> tgt[0] >> tgt[1];
+	cin >> m;
 	for(int i=0; i<n; i++) {
-		for(int j=0; j<m; j++) {
-			cin >> a[i][j];
-		}
+		cin >> x >> y;
+		a[x].push_back(y);
+		a[y].push_back(x);
 	}
 
-	for(int i=0; i<n; i++) {
-		for(int j=0; j<m; j++) {
-			if(a[i][j] && !visited[i][j]) {
-				dfs(i, j);
-				cnt++;
-				vec.push_back(lw);
-				lw = 1;
-			}
-		}
-	}
+	dfs(tgt[0], tgt[1], 0);
 
-	sort(vec.rbegin(), vec.rend());
-	cout << cnt << endl;
-	
 	if(cnt > 0)
-		cout << vec[0] << endl;
+		cout << cnt << endl;
 	else
-		cout << 0 << endl;
+		cout << -1 << endl;
 
 	return 0;
 }
