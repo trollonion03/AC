@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	10866
+* CURRENT	: 	28279
 * NEXT 		: 	15720
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -19,7 +19,7 @@ typedef unsigned long long ull;
 #define MAXN 100000
 
 int n, tmp;
-string cmd;
+int cmd;
 
 typedef struct Node {
 	Node *prev;
@@ -43,7 +43,7 @@ int main() {
 	cin >> n;
 	for(int i=0; i<n; i++) {
 		cin >> cmd;
-		if(cmd == "push_front") {
+		if(cmd == 1) {
 			cin >> tmp;
 			if(a.size == 0) {
 				Node *nw = new Node;
@@ -66,7 +66,7 @@ int main() {
 				a.size++;
 			}
 		}
-		else if(cmd == "push_back") {
+		else if(cmd == 2) {
 			cin >> tmp;
 			if(a.size == 0) {
 				Node *nw = new Node;
@@ -87,7 +87,7 @@ int main() {
 				a.size++;
 			}
 		}
-		else if(cmd == "pop_front") {
+		else if(cmd == 3) {
 			if(a.size == 0) {
 				cout << -1 << endl;
 			}
@@ -106,7 +106,7 @@ int main() {
 				a.size--;
 			}
 		}
-		else if(cmd == "pop_back") {
+		else if(cmd == 4) {
 			if(a.size == 0) {
 				cout << -1 << endl;
 			} 
@@ -125,16 +125,16 @@ int main() {
 				a.size--;
 			}
 		}
-		else if(cmd == "size") {
+		else if(cmd == 5) {
 			cout << a.size << endl;
 		}
-		else if(cmd == "empty") {
+		else if(cmd == 6) {
 			if(a.size > 0)
 				cout << 0 << endl;
 			else
 				cout << 1 << endl;
 		}
-		else if(cmd == "front") {
+		else if(cmd == 7) {
 			if(a.size <= 0) {
 				cout << -1 << endl;
 			}
@@ -143,7 +143,7 @@ int main() {
 			}
 
 		}
-		else if(cmd == "back") {
+		else if(cmd == 8) {
 			if(a.size <= 0) {
 				cout << -1 << endl;
 			}
