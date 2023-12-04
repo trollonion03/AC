@@ -4,5 +4,6 @@
         "iostream": "cpp",
         "algorithm": "cpp",
         "new": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }
