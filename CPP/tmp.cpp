@@ -1,5 +1,5 @@
 /**************************************************************
-* dfs implementation
+* bfs implementation
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
@@ -8,6 +8,7 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include <queue>
 
 using namespace std;
 constexpr int INF = 0x3f3f3f3f;
@@ -20,13 +21,22 @@ typedef unsigned long long ull;
 bool visited[9]; 			//방문 여부 저장
 vector<int> graph[9]; 		//vector 배열 생성(인접 노드에 대한 정보 저장)
 
-int dfs(int x) {
-	visited[x] = true; 
-	cout << x << " ";
-	for(int i=0; i<graph[x].size(); i++) { //인접 노드 탐색
-		int y = graph[x][i];
-		if(!visited[y])	//방문하지 않으면, 해당 노드에 대한 탐색 시작
-			dfs(y); //재귀적 방문
+int bfs(int start) {
+	queue<int> q;
+	q.push(start); // 첫 노드를 queue에 삽입
+	visited[start] = true; //첫 노드 방문 처리
+
+	while(!q.empty()) {
+		int x = q.front(); //queue에 등록된 노드를 뽑아서 탐색 대상으로 지정
+		q.pop();
+		cout << x << endl;
+		for(int i=0; i< graph[x].size(); i++) { //인접 노드 확인
+			int y = graph[x][i];
+			if(!visited[y]) { //인접 노드 중 방문하지 않은 노드 확인
+				q.push(y); //노드 탐색 등록
+				visited[y] = true;
+			}
+		}
 	}
 }
 
@@ -60,7 +70,7 @@ int main() {
     graph[8].push_back(1);
     graph[8].push_back(7);
 
-	dfs(1); //최초 노드 방문
+	bfs(1); //최초 노드 방문
 	
 	return 0;
 }
