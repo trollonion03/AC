@@ -19,63 +19,40 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 100000
 
-int n, m, v;
-int x, y;
-bool visited[1001];
-vector<int> vec[1001];
+int t, n, m, tmp, cnt = 0;
 
-void dfs(int a) {
-	visited[a] = true;
-	cout << a << " ";
-
-	for(int i=0; i<vec[a].size(); i++) {
-		int tmp = vec[a][i];
-		if(!visited[tmp]) {
-			dfs(tmp);
-		}
-	}
-}
-
-void bfs(int a) {
-	queue<int> q;
-	q.push(a);
-	visited[a] = true;
-	cout << a << " ";
-
-	while(!q.empty()) {
-		int t = q.front();
-		q.pop();
-		for(int i=0; i<vec[t].size(); i++) {
-			int tmp = vec[t][i];
-			if(!visited[tmp]) {
-				q.push(tmp);
-				visited[tmp] = true;
-				cout << tmp << " ";
-			}
-		}
-	}
-}
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m >> v;
-	for(int i=0; i<m; i++) {
-		cin >> x >> y;
-		vec[x].push_back(y);
-		vec[y].push_back(x);
+	cin >> t;
+	for(int i=0; i<t; i++) {
+		queue<pair<int,int>> q;
+		priority_queue<int> pq;
+		cin >> n >> m;
+		for(int j=0; j<n; j++) {
+			cin >> tmp;
+			q.push({j, tmp});
+			pq.push(tmp);
+		}
+		while(!q.empty()) {
+			int loc = q.front().first;
+			int val = q.front().second;
+			q.pop();
+			if(pq.top() == val) {
+				pq.pop();
+				cnt++;
+				if(m == loc) {
+					cout << cnt << endl;
+					break;
+				}
+			}
+			else {
+				q.push({loc, val});
+			}
+		}
+		cnt = 0;
 	}
-
-	for(int i=0; i<n; i++) {
-		sort(vec[i].begin(), vec[i].end());
-	}
- 
-	dfs(v);
-	cout << endl;
-	memset(visited, false, sizeof(visited));
-	bfs(v);
-	cout << endl;
-	
 	return 0;
 }
