@@ -53,11 +53,10 @@ int main() {
 		a[v].push_back(u);
 	}
 
-	for(int i=0; i<n; i++) {
+	for(int i=1; i<=n; i++) {
 		if(!visited[i]) {
 			bfs(i);
 			cnt++;
-			cout << i << "\n";
 		}
 	}
 	cout << cnt << "\n";
