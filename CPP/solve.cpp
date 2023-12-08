@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1966
+* CURRENT	: 	11724
 * NEXT 		: 	15720
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -17,42 +17,50 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 #define NOP ;
-#define MAXN 100000
+#define MAXN 1001
 
-int t, n, m, tmp, cnt = 0;
+int n, m, u, v;
+int cnt = 0;
+vector<int> a[MAXN];
+bool visited[MAXN];
+queue<int> q;
 
+void bfs(int x) {
+	q.push(x);
+	visited[x] = true;
 
+	while(!q.empty()) {
+		int tmp = q.front();
+		q.pop();
+		for(int i=0; i<a[tmp].size(); i++) {
+			int nxt = a[tmp][i];
+			if(!visited[nxt]) {
+				q.push(nxt);
+				visited[nxt] = true;
+			}
+		}
+	}
+}
+ 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> t;
-	for(int i=0; i<t; i++) {
-		queue<pair<int,int>> q;
-		priority_queue<int> pq;
-		cin >> n >> m;
-		for(int j=0; j<n; j++) {
-			cin >> tmp;
-			q.push({j, tmp});
-			pq.push(tmp);
-		}
-		while(!q.empty()) {
-			int loc = q.front().first;
-			int val = q.front().second;
-			q.pop();
-			if(pq.top() == val) {
-				pq.pop();
-				cnt++;
-				if(m == loc) {
-					cout << cnt << endl;
-					break;
-				}
-			}
-			else {
-				q.push({loc, val});
-			}
-		}
-		cnt = 0;
+	cin >> n >> m; 
+	for(int i=0; i<m; i++) {
+		cin >> u >> v;
+		a[u].push_back(v);
+		a[v].push_back(u);
 	}
+
+	for(int i=0; i<n; i++) {
+		if(!visited[i]) {
+			bfs(i);
+			cnt++;
+			cout << i << "\n";
+		}
+	}
+	cout << cnt << "\n";
+
 	return 0;
 }
