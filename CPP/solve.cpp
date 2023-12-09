@@ -17,24 +17,38 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 #define NOP ;
-#define MAXN 601
+#define MAXN 602
 
 int n, m;
 int cnt = 0;
-string a[MAXN][MAXN];
+char a[MAXN][MAXN];
 bool visited[MAXN][MAXN];
+queue<pair<int, int>> q;
 int dx[4] = {1, -1, 0, 0};
 int dy[4] = {0, 0, 1, -1};
 
-void dfs(int x, int y) {
-	
-	for(int i=0; i<4; i++) {
-		int nx = x + dx[i];
-		int ny = y + dy[i];
-		if(nx >= 1 && ny >= 1 && nx <= n && ny <= y) {
-			if(v)
+void bfs(int i, int j) {
+	visited[i][j] = true;
+
+	queue<pair<int, int>> q;
+	q.push(pair<int, int>(i, j));
+
+	while (!q.empty()) {
+		int nx = q.front().first;
+		int ny = q.front().second;
+		q.pop();
+
+		for (int i = 0; i < 4; i++) {
+			int x = nx + dx[i];
+			int y = ny + dy[i];
+
+			if (x >= 0 && y >= 0 && x < n && y < m && visited[x][y] == false) {
+				if (a[x][y] == 'X') continue;
+				if (a[x][y] == 'P') cnt++;
+				visited[x][y] = true;
+				q.push(pair<int, int>(x, y));
+			}
 		}
-		
 	}
 }
  
@@ -42,19 +56,22 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m; 
-	for(int i=1; i<=n; i++) {
-		for(int j=1; j<=m; j++) {
-			cin >> a[n][m];
-		}
-	}
+	cin >> n >> m;
 
-	for(int i=1; i<=n; i++) {
-		for(int j=1; j<=m; j++) {
-			dfs(i, j);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cin >> a[i][j];
 		}
 	}
-	cout << cnt << "\n";
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (a[i][j] == 'I') {
+				bfs(i, j);
+			}
+		}
+	}
+	if (cnt == 0) cout << "TT" << endl;
+	else cout << cnt << "\n";
 
 	return 0;
 }
