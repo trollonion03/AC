@@ -1,6 +1,6 @@
 /**************************************************************
-* CURRENT	: 	21736
-* NEXT 		: 	15720
+* CURRENT	: 	7576
+* NEXT 		: 	7569
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
@@ -17,36 +17,35 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 #define NOP ;
-#define MAXN 602
+#define MAXN 1001
+
+typedef struct tp {
+	int x;
+	int y;
+	int cnt;
+}tp;
 
 int n, m;
 int cnt = 0;
-char a[MAXN][MAXN];
+int a[MAXN][MAXN];
 bool visited[MAXN][MAXN];
-queue<pair<int, int>> q;
+queue<tp> q;
 int dx[4] = {1, -1, 0, 0};
 int dy[4] = {0, 0, 1, -1};
 
-void bfs(int i, int j) {
-	visited[i][j] = true;
-
-	queue<pair<int, int>> q;
-	q.push(pair<int, int>(i, j));
-
+void bfs() {
 	while (!q.empty()) {
-		int nx = q.front().first;
-		int ny = q.front().second;
+		tp b = q.front();
 		q.pop();
+		cnt = max(cnt, b.cnt); 
 
 		for (int i = 0; i < 4; i++) {
-			int x = nx + dx[i];
-			int y = ny + dy[i];
+			int nx = b.x + dx[i];
+			int ny = b.y + dy[i];
 
-			if (x >= 0 && y >= 0 && x < n && y < m && visited[x][y] == false) {
-				if (a[x][y] == 'X') continue;
-				if (a[x][y] == 'P') cnt++;
-				visited[x][y] = true;
-				q.push(pair<int, int>(x, y));
+			if (nx >= 0 && ny >= 0 && nx < n && ny < m && !visited[nx][ny] && a[nx][ny] != -1) {
+				q.push({nx, ny, b.cnt+1});
+				visited[nx][ny] = true;
 			}
 		}
 	}
@@ -58,20 +57,35 @@ int main() {
 
 	cin >> n >> m;
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < m; j++) {
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
 			cin >> a[i][j];
-		}
-	}
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < m; j++) {
-			if (a[i][j] == 'I') {
-				bfs(i, j);
+			if(a[i][j] == 1) {
+				visited[i][j] == true;
+				q.push({i, j, 0});
+			}
+			else if(a[i][j] == -1) {
+				visited[i][j] == true;
 			}
 		}
 	}
-	if (cnt == 0) cout << "TT" << endl;
-	else cout << cnt << "\n";
 
+	if(q.empty()) {
+		cout << "-1\n";
+		return 0;
+	}
+	bfs();
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if(!visited[i][j]) {
+				cout << "-1\n";
+				return 0;
+			}
+		}
+	}
+
+	cout << cnt << "\n";
+	
 	return 0;
 }
