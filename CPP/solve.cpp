@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	7576
+* CURRENT	: 	11123
 * NEXT 		: 	7569
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -17,75 +17,72 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 #define NOP ;
-#define MAXN 1001
+#define MAXN 101
 
-typedef struct tp {
-	int x;
-	int y;
-	int cnt;
-}tp;
-
-int n, m;
+int t, n, m;
 int cnt = 0;
 int a[MAXN][MAXN];
 bool visited[MAXN][MAXN];
-queue<tp> q;
+queue<pair<int, int>> q;
 int dx[4] = {1, -1, 0, 0};
 int dy[4] = {0, 0, 1, -1};
 
-void bfs() {
-	while (!q.empty()) {
-		tp b = q.front();
+void bfs(int x, int y) {
+	visited[x][y] = true;
+	q.push({x, y});
+
+	while(!q.empty()) {
+		int tx = q.front().first;
+		int ty = q.front().second;
 		q.pop();
-		cnt = max(cnt, b.cnt); 
-
-		for (int i = 0; i < 4; i++) {
-			int nx = b.x + dx[i];
-			int ny = b.y + dy[i];
-
-			if (nx >= 0 && ny >= 0 && nx < n && ny < m && !visited[nx][ny] && a[nx][ny] != -1) {
-				q.push({nx, ny, b.cnt+1});
-				visited[nx][ny] = true;
+		for(int i=0; i<4; i++) {
+			int nx = tx + dx[i];
+			int ny = ty + dy[i];
+			if(nx >= 0 && ny >= 0 && nx < n && ny < m) {
+				if(!visited[nx][ny] && a[nx][ny]) {
+					visited[nx][ny] = true;
+					q.push({nx, ny});
+				}
 			}
 		}
 	}
+	
 }
  
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m;
-
-	for (int i = 0; i < m; i++) {
-		for (int j = 0; j < n; j++) {
-			cin >> a[i][j];
-			if(a[i][j] == 1) {
-				visited[i][j] == true;
-				q.push({i, j, 0});
-			}
-			else if(a[i][j] == -1) {
-				visited[i][j] == true;
-			}
-		}
-	}
-
-	if(q.empty()) {
-		cout << "-1\n";
-		return 0;
-	}
-	bfs();
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < m; j++) {
-			if(!visited[i][j]) {
-				cout << "-1\n";
-				return 0;
+	cin >> t;
+	for(int i=0; i<t; i++) {
+		cin >> n >> m;
+		for(int j=0; j<n; j++) {
+			for(int k=0; k<m; k++) {
+				char tmp;
+				cin >> tmp;
+				if(tmp == '#') {
+					a[j][k] = 1;
+				}
+				else if (tmp == '.') {
+					a[j][k] = 0;
+				}
 			}
 		}
-	}
 
-	cout << cnt << "\n";
+		for(int j=0; j<n; j++) {
+			for(int k=0; k<m; k++) {
+				if(!visited[j][k] && a[j][k]) {
+					visited[j][k] = true;
+					bfs(j, k);
+					cnt++;
+				}
+			}
+		}
+		cout << cnt << "\n";
+		cnt = 0;
+		memset(a, 0, sizeof(a));
+		memset(visited, 0, sizeof(visited));
+	}
 	
 	return 0;
 }
