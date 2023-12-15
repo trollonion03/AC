@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1303
+* CURRENT	: 	1406
 * NEXT 		: 	7569
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 #include <queue>
-#include <set>
 
 using namespace std;
 constexpr int INF = 0x3f3f3f3f;
@@ -18,71 +17,194 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 #define NOP ;
-#define MAXN 101
+#define MAXN 1000000
 
-int n, m;
-string s;
-int a[MAXN][MAXN];
-bool visited[MAXN][MAXN];
-queue<pair<int, int>> q;
-int dx[4] = {1, -1, 0, 0};
-int dy[4] = {0, 0, -1, 1};
-int wcnt = 0, bcnt = 0;
-int ctmp = 0;
+int n, tmp;
+string cmd;
 
-void bfs(int x, int y, int tgt) {
-    visited[x][y] = true;
-    q.push({x, y});
-    ctmp++;
+typedef struct Node {
+	Node *prev;
+	Node *next;
+	char data;
+};
 
-    while(!q.empty()) {
-        int xtmp = q.front().first;
-        int ytmp = q.front().second;
-        q.pop();
-        for(int i=0; i<4; i++) {
-            int nx = xtmp + dx[i];
-            int ny = ytmp + dy[i];
-            if(nx>=0 && ny>=0 && nx<m && ny<n && !visited[nx][ny] && a[nx][ny] == tgt) {
-                visited[nx][ny] = true;
-                q.push({nx, ny});
-                ctmp++;
-            }
-        }
-    }
-}
+class CDLinkedList {
+public:
+	Node *begin;
+	Node *end;
+	int size = 0;
+};
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-    cin >> n >> m;
-    for(int i=0; i<n; i++) {
-        cin >> s;
-        for(int j=0; j<m; j++) {
-            if(s[j] == 'W') {
-                a[i][j] = 1;
-            }
-            else if(s[j] == 'B') {
-                a[i][j] = 0;
-            }
-        }
-    }
+	CDLinkedList cdl;
 
-    for(int i=0; i<n; i++) {
-        for(int j=0; j<m; j++) {
-            if(!visited[i][j]) {
-                bfs(i, j, a[i][j]);
-                if(a[i][j]) {
-                    wcnt += ctmp * ctmp;
-                }
-                else {
-                    bcnt += ctmp * ctmp;
-                }
-                ctmp = 0;
-            }
+	
+    cin >> cmd;
+    //TODO: begin 노드의 prev 포인터 지정 필요;
+    for(int i=0; i<cmd.size(); i++) {
+        Node *n = new Node;
+        n->data = cmd[i];
+        if(i == 0) {
+            cdl.begin = n;
+            
         }
+        else {
+            cdl.end->next = n;
+			n->prev = cdl.end;
+        }
+        cdl.end = n;
+        cdl.size++;
     }
     
-    cout << wcnt << " " << bcnt << "\n";	
+#if 0
+    Node *tmp = cdl.begin;
+    for(int i=0; i<cdl.size; i++) {
+        cout << tmp->data;
+        tmp = tmp->next;
+    }
+#endif
+
+#if 1
+    //TODO: begin 노드의 prev포인터 처리 추가
+    cin >> n;
+    Node *cur = cdl.begin;
+    while(n--) {
+        cin >> cmd;
+        if(cmd == "L") {
+            if(cur != cdl.begin) {
+                cur = cur->prev;
+            }
+        }
+        else if(cmd == "D") {
+            if(cur != cdl.end) {
+                cur = cur->next;
+            }
+        }
+        else if(cmd == "B") {
+            
+        }
+        else if(cmd == "P") {
+
+        }
+    }
+#endif
+
+    // cin >> n;
+	// for(int i=0; i<n; i++) {
+	// 	cin >> cmd;
+	// 	if(cmd == "push_front") {
+	// 		cin >> tmp;
+	// 		if(a.size == 0) {
+	// 			Node *nw = new Node;
+	// 			a.begin = nw; a.end = nw;
+	// 			a.begin->data = tmp;
+				
+	// 			a.begin->next = 0;
+	// 			a.begin->prev = 0;
+	// 			a.size++;
+	// 		}
+	// 		else {
+	// 			Node *nw = new Node;
+	// 			nw->data = tmp;
+				
+	// 			nw->next = a.begin;
+	// 			nw->prev = 0;
+				
+	// 			a.begin->prev = nw;
+	// 			a.begin = nw;
+	// 			a.size++;
+	// 		}
+	// 	}
+	// 	else if(cmd == "push_back") {
+	// 		cin >> tmp;
+	// 		if(a.size == 0) {
+	// 			Node *nw = new Node;
+	// 			a.begin = nw; a.end = nw;
+	// 			a.begin->data = tmp;
+				
+	// 			a.begin->next = 0;
+	// 			a.begin->prev = 0;
+	// 			a.size++;
+	// 		}
+	// 		else {
+	// 			Node *nw = new Node;
+	// 			nw->data = tmp;
+
+	// 			a.end->next = nw;
+	// 			nw->prev = a.end;
+	// 			a.end = nw;
+	// 			a.size++;
+	// 		}
+	// 	}
+	// 	else if(cmd == "pop_front") {
+	// 		if(a.size == 0) {
+	// 			cout << -1 << endl;
+	// 		}
+	// 		else if(a.size == 1) {
+	// 			cout << a.begin->data << endl;
+	// 			delete a.begin;
+	// 			a.begin = 0; a.end = 0;
+	// 			a.size--;
+	// 		}
+	// 		else {
+	// 			cout << a.begin->data << endl;
+	// 			Node *nw = a.begin->next;
+	// 			delete a.begin;
+	// 			a.begin = nw;
+	// 			a.begin->prev = 0;
+	// 			a.size--;
+	// 		}
+	// 	}
+	// 	else if(cmd == "pop_back") {
+	// 		if(a.size == 0) {
+	// 			cout << -1 << endl;
+	// 		} 
+	// 		else if(a.size == 1) {
+	// 			cout << a.end->data << endl;
+	// 			delete a.end;
+	// 			a.begin = 0; a.end = 0;
+	// 			a.size--;
+	// 		}
+	// 		else {
+	// 			cout << a.end->data << endl;
+	// 			Node *nw = a.end->prev;
+	// 			delete a.end;
+	// 			a.end = nw;
+	// 			a.end->next = 0;
+	// 			a.size--;
+	// 		}
+	// 	}
+	// 	else if(cmd == "size") {
+	// 		cout << a.size << endl;
+	// 	}
+	// 	else if(cmd == "empty") {
+	// 		if(a.size > 0)
+	// 			cout << 0 << endl;
+	// 		else
+	// 			cout << 1 << endl;
+	// 	}
+	// 	else if(cmd == "front") {
+	// 		if(a.size <= 0) {
+	// 			cout << -1 << endl;
+	// 		}
+	// 		else {
+	// 			cout << a.begin->data << endl;
+	// 		}
+
+	// 	}
+	// 	else if(cmd == "back") {
+	// 		if(a.size <= 0) {
+	// 			cout << -1 << endl;
+	// 		}
+	// 		else {
+	// 			cout << a.end->data << endl;
+	// 		}
+	// 	}
+	
+	// }
+
 	return 0;
 }
