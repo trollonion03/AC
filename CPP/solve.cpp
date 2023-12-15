@@ -21,6 +21,7 @@ typedef unsigned long long ull;
 
 int n, tmp;
 string cmd;
+bool end; //false: cdl.begin, true: cdl.end
 
 typedef struct Node {
 	Node *prev;
@@ -43,13 +44,13 @@ int main() {
 
 	
     cin >> cmd;
-    //TODO: begin 노드의 prev 포인터 지정 필요;
+    //TODO: begin, end 노드의 prev, next 포인터 지정 필요;
     for(int i=0; i<cmd.size(); i++) {
         Node *n = new Node;
         n->data = cmd[i];
         if(i == 0) {
             cdl.begin = n;
-            
+            n->prev = 0;
         }
         else {
             cdl.end->next = n;
@@ -77,14 +78,20 @@ int main() {
             if(cur != cdl.begin) {
                 cur = cur->prev;
             }
+            else {
+                cur = 0;
+            }
         }
         else if(cmd == "D") {
             if(cur != cdl.end) {
                 cur = cur->next;
             }
+            else {
+                cur = 0;
+            }
         }
         else if(cmd == "B") {
-            
+
         }
         else if(cmd == "P") {
 
