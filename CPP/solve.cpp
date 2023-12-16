@@ -21,7 +21,6 @@ typedef unsigned long long ull;
 
 int n, tmp;
 string cmd;
-bool end; //false: cdl.begin, true: cdl.end
 
 typedef struct Node {
 	Node *prev;
@@ -44,13 +43,12 @@ int main() {
 
 	
     cin >> cmd;
-    //TODO: begin, end 노드의 prev, next 포인터 지정 필요;
+    //TODO: begin, end 노드의 prev, next 포인터 지정 필요 -> nullptr로 판별;
     for(int i=0; i<cmd.size(); i++) {
         Node *n = new Node;
         n->data = cmd[i];
         if(i == 0) {
             cdl.begin = n;
-            n->prev = 0;
         }
         else {
             cdl.end->next = n;
@@ -58,6 +56,7 @@ int main() {
         }
         cdl.end = n;
         cdl.size++;
+
     }
     
 #if 0
@@ -69,33 +68,56 @@ int main() {
 #endif
 
 #if 1
-    //TODO: begin 노드의 prev포인터 처리 추가
     cin >> n;
-    Node *cur = cdl.begin;
+    Node *cur = cdl.end;
     while(n--) {
         cin >> cmd;
         if(cmd == "L") {
-            if(cur != cdl.begin) {
-                cur = cur->prev;
-            }
-            else {
-                cur = 0;
-            }
+            if(cur->prev)
+				cur = cur->prev;
         }
         else if(cmd == "D") {
-            if(cur != cdl.end) {
-                cur = cur->next;
-            }
-            else {
-                cur = 0;
-            }
+            if(cur->next)
+				cur = cur->next;
         }
         else if(cmd == "B") {
-
+			if (cur != nullptr) {
+				Node *tmp = cur;
+				cur = tmp->prev;
+				if(tmp->next) {
+					cur->next = tmp->next;
+					tmp->next->prev = cur;
+					tmp->prev=nullptr;
+				}
+				else {
+					cur->next = nullptr;
+					cdl.end = cur;
+				}
+				cdl.size--;
+			}
         }
         else if(cmd == "P") {
-
+			char ch;
+			cin >> ch;
+			Node* tmp = new Node;
+			tmp->data = ch;
+			tmp->prev = cur;
+			if(cur->next) {
+				tmp->next=cur->next;
+				cur->next->prev=tmp;
+			}
+			else {
+				tmp->next = nullptr;
+				cdl.end = tmp;
+			}
+			cdl.size++;
         }
+    }
+
+	Node *tmp = cdl.begin;
+    for(int i=0; i<cdl.size; i++) {
+        cout << tmp->data;
+        tmp = tmp->next;
     }
 #endif
 
