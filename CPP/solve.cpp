@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	9019
+* CURRENT	: 	10026
 * NEXT 		: 	7569
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -17,52 +17,61 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 #define NOP ;
-#define MAXN 10001
+#define MAXN 101
+
+typedef struct container {
+	int x;
+	int y;
+	// R:1, G:2, B:3
+};
 
 int n;
-int src, dst;
-bool visited[MAXN];
+int cnt = 0;
+char ch;
+int a[MAXN][MAXN];
+bool visited[MAXN][MAXN];
+int dx[4] = {1, -1, 0, 0};
+int dy[4] = {0, 0, 1, -1};
 
-void bfs() {
-	queue<pair<int, string>> q;
-	q.push({src, ""});
-	visited[src] = true;
+void bfs(int x, int y, int clr, bool state) {
+	queue<container> q;
+	q.push({x, y});
+	visited[x][y] = true;
 
 	while (!q.empty()) {
-		int num = q.front().first;
-		string log = q.front().second;
+		int cx = q.front().x;
+		int cy = q.front().y;
 		q.pop();
-		
-		if (num == dst) {
-			cout << log << "\n";
-			break;
-		}
-		
-		int d, s, l, r;
-		
-		d = (num*2) % 10000;
-		if(!visited[d]) {
-			q.push({d, log + "D"});
-			visited[d] = true;
+
+		for(int i=0; i<4; i++) {
+			int nx = cx + dx[i];
+			int ny = cy + dy[i];
+
+			if(nx>=0 && ny>=0 && nx<n && ny<n && !visited[nx][ny]) {
+				if(!state) {
+					if(a[nx][ny] == clr) {
+						visited[nx][ny] = true;
+						q.push({nx, ny});
+					}
+				}
+				else {
+					if(clr == 1 || clr == 2) {
+						if (a[nx][ny] == 1 || a[nx][ny] == 2) {
+							visited[nx][ny] = true;
+							q.push({nx, ny});
+						}
+					}
+					else {
+						if(a[nx][ny] == clr) {
+							visited[nx][ny] = true;
+							q.push({nx, ny});
+						}
+					}
+				}
+			}
 		}
 
-		s = num-1 < 0 ? 9999 : num-1;
-		if(!visited[s]) {
-			q.push({s, log + "S"});
-			visited[s] = true;
-		}
 
-		l = (num % 1000) * 10 + (num / 1000);
-		if(!visited[l]) {
-			q.push({l, log + "L"});
-			visited[l] = true;
-		}
-
-		r = num / 10 + (num % 10)*1000;
-		if(!visited[r]) {
-			q.push({r, log + "R"});
-			visited[r] = true;
-		}
 	}
 }
 
@@ -72,10 +81,43 @@ int main() {
 	cin.tie(0); cout.tie(0);
 
 	cin >> n;
-	while (n--) {
-		cin >> src >> dst;
-		memset(visited, 0, sizeof(visited));
-		bfs();
+	for(int i=0; i<n; i++) {
+		for(int j=0; j<n; j++) {
+			cin >> ch;
+			if(ch == 'R') {
+				a[i][j] = 1;
+			}
+			else if(ch == 'G') {
+				a[i][j] = 2;
+			}
+			else if(ch == 'B') {
+				a[i][j] = 3;
+			}
+		}
 	}
+
+	for(int i=0; i<n; i++) {
+		for(int j=0; j<n; j++) {
+			if(!visited[i][j]) {
+				bfs(i, j, a[i][j], false);
+				cnt++;
+			}
+		}
+	}
+
+	cout << cnt << " ";
+	cnt = 0;
+	memset(visited, 0, sizeof(visited));
+
+	for(int i=0; i<n; i++) {
+		for(int j=0; j<n; j++) {
+			if(!visited[i][j]) {
+				bfs(i, j, a[i][j], true);
+				cnt++;
+			}
+		}
+	}
+	cout << cnt << "\n";
+
 	return 0;
 }
