@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	25418
+* CURRENT	: 	16928
 * NEXT 		: 	7569
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -17,49 +17,62 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 #define NOP ;
-#define MAXN 1000010
+#define MAXN 101
 
-int n;
-int src, dst;
-bool visited[MAXN];
+int n, m, s, e;
+int lds[MAXN];
+queue<pair<int,int>> q;
+int visited[MAXN];
 
 void bfs() {
-	queue<pair<int, int>> q;
-	q.push({src, 0});
-	visited[src] = true;
+	int ans = INF;
+	q.push({1, 0});
+	visited[1] = true;
 
-	while (!q.empty()) {
-		int num = q.front().first;
+	while(!q.empty()) {
+		int cur = q.front().first;
 		int cnt = q.front().second;
 		q.pop();
-		
-		if (num == dst) {
-			cout << cnt << "\n";
+
+		if(cur == 100) {
+			ans = min(ans, cnt);
 			break;
 		}
-		
-		int c1, c2;
-		
-		c1 = num+1;
-		if(c1 <= MAXN && !visited[c1]) {
-			visited[c1] = true;
-			q.push({c1, cnt+1});
-		}
 
-		c2 = num * 2;
-		if(c2 <= MAXN && !visited[c2]) {
-			visited[c2] = true;
-			q.push({c2, cnt+1});
+		for(int i=1; i<=6; i++) {
+			int next = cur + i;
+
+			if(next > 100 || visited[next]) {
+				continue;
+			}
+
+			visited[next] = true;
+			
+			if(lds[next] == 0) {
+				q.push({next, cnt+1});
+				
+			}
+			else {
+				q.push({lds[next], cnt+1});
+			}
 		}
 	}
+	cout << ans << "\n";
+	return;
 }
-
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> src >> dst;
+	cin >> n >> m;
+	memset(lds, 0, sizeof(lds));
+	for(int i=0; i<n; i++) {
+		cin >> s >> e;
+		lds[s] = e;
+	}
+	
 	bfs();
+
 	return 0;
 }
