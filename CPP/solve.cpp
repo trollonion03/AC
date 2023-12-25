@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1697
+* CURRENT	: 	2178
 * NEXT 		: 	7569
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <memory.h>
 #include <cstring>
+#include <cstdlib>
 #include <string>
 #include <vector>
 #include <queue>
@@ -17,45 +18,50 @@ typedef long long ll;
 typedef unsigned long long ull;
 
 #define NOP ;
-#define MAXN 100001
+#define MAXN 101
+
+typedef struct st {
+	int x;
+	int y;
+	int cnt;
+};
 
 int n, m;
 int ans = INF;
-queue<pair<int, int>> q;
-int visited[MAXN];
+string input;
+int a[MAXN][MAXN];
+bool visited[MAXN][MAXN];
+queue<st> q;
+
+int dx[4] = {1, -1, 0, 0};
+int dy[4] = {0, 0, 1, -1};
 
 void bfs() {
-	q.push({n, 0});
-	visited[n] = false;
+	q.push({0, 0, 1});
+	visited[0][0] = true;
 
 	while(!q.empty()) {
-		int cur = q.front().first;
-		int cnt = q.front().second;
+		int x = q.front().x;
+		int y = q.front().y;
+		int cnt = q.front().cnt;
 		q.pop();
 
-		if(cur == m) {
+		if(x == n-1 && y == m-1) {
 			ans = min(ans, cnt);
 		}
 
-		int neg = cur - 1;
-		if(neg < MAXN && neg >= 0 && !visited[neg]) {
-			q.push({neg, cnt+1});
-			visited[neg] = true;
-		}
+		for(int i=0; i<4; i++) {
+			int nx = x + dx[i];
+			int ny = y + dy[i];
 
-		int pos = cur + 1;
-		if(pos < MAXN && pos >= 0 && !visited[pos]) {
-			q.push({pos, cnt+1});
-			visited[pos] = true;
-		}
-
-		int dlx = cur * 2;
-		if(dlx < MAXN && dlx >= 0 && !visited[dlx]) {
-			q.push({dlx, cnt+1});
-			visited[dlx] = true;
+			if(nx>=0 && ny>=0 && x<n && y<m && !visited[nx][ny] && a[nx][ny] == 1) {
+				q.push({nx, ny, cnt+1});
+				visited[nx][ny] = true;
+			}
 		}
 	}
-	cout << ans << '\n';
+
+	cout << ans << "\n";
 }
 
 int main() {
@@ -63,6 +69,13 @@ int main() {
 	cin.tie(0); cout.tie(0);
 
 	cin >> n >> m;
+	for(int i=0; i<n; i++) {
+		cin >> input;
+		for(int j=0; j<input.size(); j++) {
+			a[i][j] = (int)input[j] - (int)'0';
+		}
+	}
+
 	bfs();
 
 	return 0;
