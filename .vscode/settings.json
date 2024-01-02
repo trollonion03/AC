@@ -9,7 +9,8 @@
         "initializer_list": "cpp",
         "utility": "cpp",
         "vector": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "cstring": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
