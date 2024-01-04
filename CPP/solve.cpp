@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	16953
+* CURRENT	: 	16236
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -19,50 +19,108 @@ typedef unsigned long long ull;
 
 #define pii pair<int,int>
 #define NOP ;
-#define MAXN 10000000001
+#define MAXN 21
 
-ll n, m;
-int ans = INF;
-queue<pair<ll, int>> q;
+typedef struct ct {
+	int x;
+	int y;
+	int time;
+};
 
-void bfs() {
-	q.push({n, 0});
+typedef struct shark {
+	int size;
+	int cnt;
+};
+
+int n;
+int a[MAXN][MAXN];
+int ans = 0;
+
+shark bShark = {2, 0};
+pii start;
+int dx[4] = {-1, 0, 0, 1};
+int dy[4] = {0, -1, 1, 0};
+
+
+int bfs() {
+	queue<ct> q;
+	bool visited[MAXN][MAXN] = {0,};
+	bool flag = false;
+	int cost = 0;
+	
+	q.push({start.first, start.second, 0});
+	visited[start.first][start.second] = true;
 
 	while(!q.empty()) {
-		ll cur = q.front().first;
-		int cnt = q.front().second;
+		int x = q.front().x;
+		int y = q.front().y;
+		int time = q.front().time;
 		q.pop();
 
-		if(cur == m) {
-			ans = min(ans, cnt);
-		}
+		for(int i=0; i<4; i++) {
+			int nx = x + dx[i];
+			int ny = y + dy[i];
 
-		ll x2 = cur*2;
-		if(x2 <= m) {
-			q.push({x2, cnt+1});
-		}
-
-		ll a1 = cur*10+1;
-		if(a1 <= m) {
-			q.push({a1, cnt+1});
+			if(nx>=0 && ny>=0 && nx<n && ny<n && !visited[nx][ny]) {
+				if(a[nx][ny] > 0 && a[nx][ny] < bShark.size) {
+					if(!flag) {
+						flag = true;
+						start.first = nx;
+						start.second = ny;
+						cost = time+1;
+						visited[nx][ny] = true;
+					}
+					else {
+						if(time+1 <= cost && (nx < start.first || (ny < start.second && nx == start.first))) {
+							start.first = nx;
+							start.second = ny;
+							cost = time+1;
+							visited[nx][ny] = true;
+						}
+					}
+				}
+				else if(a[nx][ny] >= 0 && a[nx][ny] <= bShark.size) {
+					q.push({nx, ny, time+1});
+					visited[nx][ny] = true;
+				}
+			}
 		}
 	}
-
-	if(ans == INF) {
-		ans = -1;
-	}
-	else {
-		ans += 1;
-	}
+	return cost;
 }
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m;
-	bfs();
+	cin >> n;
+	for(int i=0; i<n; i++) {
+		for(int j=0; j<n; j++) {
+			cin >> a[i][j];
+			if(a[i][j] == 9) {
+				start.first = i;
+				start.second = j;
+				a[i][j] = 0;
+			}
+		}
+	}
+ 
+	int able;
+	while(true) {
+		able = bfs();
+		if(able == 0)
+			break;
+		else {
+			a[start.first][start.second] = 0;
+			ans += able;
+			bShark.cnt += 1;
+			if(bShark.size == bShark.cnt) {
+				bShark.size++;
+				bShark.cnt = 0;
+			}
+		}
+	}
 	cout << ans << "\n";
-	
+
 	return 0;
 }
