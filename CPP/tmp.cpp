@@ -1,5 +1,5 @@
 /**************************************************************
-* bfs implementation
+* dijkstra implementation
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
@@ -18,59 +18,75 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 100000
 
-bool visited[9]; 			//방문 여부 저장
-vector<int> graph[9]; 		//vector 배열 생성(인접 노드에 대한 정보 저장)
+int num = 6;
+vector<pair<int,int>> a[7]; // 간선 정보
+int d[7]; // 최소 비용;
 
-int bfs(int start) {
-	queue<int> q;
-	q.push(start); // 첫 노드를 queue에 삽입
-	visited[start] = true; //첫 노드 방문 처리
+void dijkstra(int start) {
+	d[start] = 0;
+	priority_queue<pair<int, int>> pq; // 힙 구조 사용
+	pq.push({start, 0});
 
-	while(!q.empty()) {
-		int x = q.front(); //queue에 등록된 노드를 뽑아서 탐색 대상으로 지정
-		q.pop();
-		cout << x << endl;
-		for(int i=0; i< graph[x].size(); i++) { //인접 노드 확인
-			int y = graph[x][i];
-			if(!visited[y]) { //인접 노드 중 방문하지 않은 노드 확인
-				q.push(y); //노드 탐색 등록
-				visited[y] = true;
+	while(!pq.empty()) {
+		int cur = pq.top().first;
+		int dist = -pq.top().second;
+		pq.pop();
+
+		if(d[cur] < dist)
+			continue;
+
+		for(int i=0; i<a[cur].size(); i++) {
+			int next = a[cur][i].first; //인접 노드
+			int ndist = dist + a[cur][i].second; // 인접 노드로 거쳐 가는 비용
+			if(ndist < d[next]) {
+				d[next] = ndist;
+				pq.push({next, -ndist});
 			}
 		}
 	}
 }
 
+
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	graph[1].push_back(2);
-	graph[2].push_back(3);
-	graph[3].push_back(8);
+	for(int i=1; i<=num; i++) {
+		d[i] = INF;
+	}
 
-	graph[2].push_back(1);
-    graph[2].push_back(7);
+	a[1].push_back({2, 2});
+	a[1].push_back({3, 5});
+	a[1].push_back({4, 1});
 
-    graph[3].push_back(1);
-    graph[3].push_back(4);
-    graph[3].push_back(5);
+	a[2].push_back({1, 2});
+	a[2].push_back({3, 3});
+	a[2].push_back({4, 2});
 
-    graph[4].push_back(3);
-    graph[4].push_back(5);
+	a[3].push_back({1, 5});
+	a[3].push_back({2, 3});
+	a[3].push_back({4, 3});
+	a[3].push_back({5, 1});
+	a[3].push_back({6, 5});
 
-    graph[5].push_back(3);
-    graph[5].push_back(4);
+	a[4].push_back({1, 1});
+	a[4].push_back({2, 2});
+	a[4].push_back({3, 3});
+	a[4].push_back({5, 1});
 
-    graph[6].push_back(7);
+	a[5].push_back({3, 1});
+	a[5].push_back({4, 1});
+	a[5].push_back({6, 2});
 
-    graph[7].push_back(2);
-    graph[7].push_back(6);
-    graph[7].push_back(8);
+	a[6].push_back({3, 5});
+	a[6].push_back({5, 2});
 
-    graph[8].push_back(1);
-    graph[8].push_back(7);
+	dijkstra(1);
 
-	bfs(1); //최초 노드 방문
+	for(int i=1; i<=num; i++) {
+		cout << d[i] << " ";
+	}
+	cout << "\n";
 	
 	return 0;
 }
