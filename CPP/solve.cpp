@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	16236
+* CURRENT	: 	1753
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -8,121 +8,75 @@
 #include <memory.h>
 #include <cstring>
 #include <cstdlib>
+#include <cstdio>
 #include <string>
 #include <vector>
 #include <queue>
 
 using namespace std;
-constexpr int INF = 0x3f3f3f3f;
+// constexpr int INF = 0x3f3f3f3f;
+constexpr int INF = 987654321;
 typedef long long ll;
 typedef unsigned long long ull;
 
 #define pii pair<int,int>
 #define NOP ;
-#define MAXN 21
+#define MAXN 20001
 
-typedef struct ct {
-	int x;
-	int y;
-	int time;
-};
+int n, m, st;
+vector<pair<int,int>> a[300001];
+int d[MAXN];
+bool visited[MAXN];
 
-typedef struct shark {
-	int size;
-	int cnt;
-};
+void dijkstra(int start) {
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+	d[start] = 0;
+	pq.push({0, start});
 
-int n;
-int a[MAXN][MAXN];
-int ans = 0;
+	while(!pq.empty()) {
+		int dist = -pq.top().first;
+		int cur = pq.top().second;
+		pq.pop();
 
-shark bShark = {2, 0};
-pii start;
-int dx[4] = {-1, 0, 0, 1};
-int dy[4] = {0, -1, 1, 0};
+		if(d[cur] < dist)
+			continue;
 
-
-int bfs() {
-	queue<ct> q;
-	bool visited[MAXN][MAXN] = {0,};
-	bool flag = false;
-	int cost = 0;
-	
-	q.push({start.first, start.second, 0});
-	visited[start.first][start.second] = true;
-
-	while(!q.empty()) {
-		int x = q.front().x;
-		int y = q.front().y;
-		int time = q.front().time;
-		q.pop();
-
-		for(int i=0; i<4; i++) {
-			int nx = x + dx[i];
-			int ny = y + dy[i];
-
-			if(nx>=0 && ny>=0 && nx<n && ny<n && !visited[nx][ny]) {
-				if(a[nx][ny] > 0 && a[nx][ny] < bShark.size) {
-					if(!flag) {
-						flag = true;
-						start.first = nx;
-						start.second = ny;
-						cost = time+1;
-						visited[nx][ny] = true;
-					}
-					else {
-						//상어의 상단 or 좌측 물고기부터 먹도록 처리
-						if(time+1 <= cost && (nx < start.first || (ny < start.second && nx == start.first))) {
-							start.first = nx;
-							start.second = ny;
-							cost = time+1;
-							visited[nx][ny] = true;
-						}
-					}
-				}
-				// 물고기 크기가 상어의 크기보다 큰 경우 지나가지 않음에 대한 처리가 필요함
-				else if(a[nx][ny] >= 0 && a[nx][ny] <= bShark.size) {
-					q.push({nx, ny, time+1});
-					visited[nx][ny] = true;
-				}
+		for(int i=0; i<a[cur].size(); i++) {
+			int next = a[cur][i].first; 
+			int ndist = dist + a[cur][i].second;
+			if(ndist < d[next]) {
+				d[next] = ndist;
+				pq.push({-ndist, next});
 			}
 		}
 	}
-	return cost;
+
+	for(int i=1; i<=n; i++) {
+		if(d[i] == INF)
+			cout << "INF\n";
+		else
+			cout << d[i] << "\n";
+	}
 }
+
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n;
-	for(int i=0; i<n; i++) {
-		for(int j=0; j<n; j++) {
-			cin >> a[i][j];
-			if(a[i][j] == 9) {
-				start.first = i;
-				start.second = j;
-				a[i][j] = 0;
-			}
-		}
+	cin >> n >> m >> st;
+
+	for(int i=0; i<m; i++) {
+		int u, v, w;
+		cin >> u >> v >> w;
+		a[u].push_back({v, w});
 	}
- 
-	int able;
-	while(true) {
-		able = bfs();
-		if(able == 0)
-			break;
-		else {
-			a[start.first][start.second] = 0;
-			ans += able;
-			bShark.cnt += 1;
-			if(bShark.size == bShark.cnt) {
-				bShark.size++;
-				bShark.cnt = 0;
-			}
-		}
+
+	for(int i=1; i<=n; i++) {
+		d[i] = INF;
 	}
-	cout << ans << "\n";
+
+	dijkstra(st);
 
 	return 0;
 }
