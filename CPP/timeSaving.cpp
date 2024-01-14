@@ -50,7 +50,6 @@ int main() {
         int aa, b, c;
         scanf("%d %d %d", &aa, &b, &c);
         a[aa].push_back({b, c});
-        a[b].push_back({aa, c});
     }
     scanf("%d %d", &v1, &v2);
 

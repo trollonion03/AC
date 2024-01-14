@@ -31,66 +31,66 @@ typedef struct beaver {
 int n, m;
 int ans = INF;
 char a[MAXN][MAXN];
+int mp[MAXN][MAXN];
 bool visited[MAXN][MAXN];
 queue<beaver> qb;
-queue<pii> qw;
-pii sb, sw;
+queue<beaver> qw;
+pii sb, sw = {-1, -1};
 
 int dx[4] = {-1, 1, 0, 0};
 int dy[4] = {0, 0, 1, -1};
 
 void bfs() {
-	qb.push({sb.first, sb.second, 0});
-	
-
-	while(!qb.empty()) {
-		int bx = qb.front().x;
-		int by = qb.front().y;
-		int cnt = qb.front().cnt;
-		qb.pop();
-		
-
-		if(a[bx][by] == 'D') {
-			ans = min(ans, cnt);
-			continue;
-		}
+	// 구역별 물이 차오르는 시간 계산
+	while(!qw.empty()) {
+		int x = qw.front().x;
+		int y = qw.front().y;
+		int cnt = qw.front().cnt;
+		qw.pop();
 
 		for(int i=0; i<4; i++) {
-			int nbx = bx + dx[i];
-			int nby = bx + dy[i];
-			int nwx = -1, nwy = -1;
-			if(wx != -1 && wy != -1) {
-				nwx = wx + dx[i];
-				nwy = wy + dy[i];
-			}
+			int nx = x + dx[i];
+			int ny = y + dy[i];
 
-			bool flag;
-			if(nbx >= 0 && nby >= 0 && nbx < n && nby < m && !visited[nbx][nby] && a[nbx][nby] != 'X') {
-				for(int j=0; j<4; j++) {
-					int cx = nbx + dx[i];
-					int cy = nby + dy[i];
-					if(!visited[cx][cy] && a[cx][cy] == '*' && a[nbx][nby] != 'D') {
-						flag = true;
-					}
+			if(nx>=0 && ny>=0 && nx<n && ny<m && !visited[nx][ny]) {
+				if(a[nx][ny] == 'D' || a[nx][ny] == 'X') {
+					mp[nx][ny] = -1;
+					continue;
 				}
-
-				if(!flag) {
-					qb.push({nbx, nby, cnt+1});
-					visited[nbx][nby] = true;
-				}
-			}
-
-			if(nwx >= 0 && nwy >= 0 && nwx < n && nwy < m && !visited[nwx][nwy]) {
-				if(a[nwx][nwy] != 'X' && a[nwx][nwy]) {
-					qw.push({nwx, nwy});
-					visited[nwx][nwy] = true;
-				}
+				mp[nx][ny] = cnt+1;
+				qw.push({nx, ny, cnt+1});
+				visited[nx][ny] = true;
 			}
 		}
 	}
+	memset(visited, 0, sizeof(visited));
 
-	qw.push(sw);
-	
+	qb.push({sb.first, sb.second, 0});
+	visited[sb.first][sb.second] = true;
+
+	while(!qb.empty()) {
+		int x = qb.front().x;
+		int y = qb.front().y;
+		int cnt = qb.front().cnt;
+		qb.pop();
+
+		if(a[x][y] == 'D') {
+			ans = min(ans, cnt);
+		}
+
+		for(int i=0; i<4; i++) {
+			int nx = x + dx[i];
+			int ny = y + dy[i];
+
+			if(nx>=0 && ny>=0 && nx<n && ny<m && !visited[nx][ny]) {
+				if((mp[nx][ny] > 0 && cnt+1 >= mp[nx][ny]) || a[nx][ny] == 'X') {
+					continue;
+				}
+				qb.push({nx, ny, cnt+1});
+				visited[nx][ny] = true;
+			}
+		}
+	}
 }
 
 int main() {
@@ -106,8 +106,8 @@ int main() {
 				sb.second = j;
 			}
 			if(a[i][j] == '*') {
-				sw.first = i;
-				sw.second = j;
+				qw.push({i, j, 0});
+				visited[i][j] = true;
 			}
 		}
 	}
