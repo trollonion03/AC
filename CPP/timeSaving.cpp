@@ -1,6 +1,6 @@
 /**************************************************************
 * Time-saving Solution (C&C++)
-* CURRENT	: 	1916
+* CURRENT	: 	1238
 * RETRY     :   0
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -14,13 +14,24 @@ constexpr int INF = 987654321;
 typedef long long ll;
 typedef unsigned long long ull;
 
-int n, m, v1, v2;
-vector<pair<int, int>> a[8001];
-int d[8001];
+#define MAXN 1010
+
+int n, m, v;
+vector<pair<int, int>> a[MAXN];
+int d[MAXN];
+int ans[MAXN];
+int res = -1;
+
+void init() {
+    for(int i=1; i<=n; i++) {
+        d[i] = INF;
+    }
+}
 
 void dijkstra(int s) {
     priority_queue<pair<int, int>> pq;
     pq.push({0, s});
+    d[s] = 0;
     
     while(!pq.empty()) {
         int cur = pq.top().second;
@@ -44,21 +55,26 @@ void dijkstra(int s) {
 }
 
 int main() {
-    scanf("%d", &n);
-    scanf("%d", &m);
+    scanf("%d %d %d", &n, &m, &v);
 
     for(int i=0; i<m; i++) {
         int aa, b, c;
         scanf("%d %d %d", &aa, &b, &c);
         a[aa].push_back({b, c});
     }
-    scanf("%d %d", &v1, &v2);
 
     for(int i=1; i<=n; i++) {
-        d[i] = INF;
+        init();
+        dijkstra(i);
+        ans[i] = d[v];
     }
-    dijkstra(v1);
-    cout << d[v2] << "\n";
+    init();
+    dijkstra(v);
+    for(int i=0; i<=n; i++) {
+        ans[i] += d[i];
+        res = max(res, ans[i]);
+    }
+    printf("%d\n", res);
 
     return 0;
 }
