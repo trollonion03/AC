@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1918
+* CURRENT	: 	11725
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -20,66 +20,46 @@ typedef unsigned long long ull;
 
 #define pii pair<int,int>
 #define NOP ;
-#define MAXN 51
+#define MAXN 100001
 
-string s;
-stack<char> st;
+int n, m;
+int visited[MAXN];
+vector<int> a[MAXN];
+stack<int> st;
 
+void dfs() {
+	st.push(1);
+	
+	while(!st.empty()) {
+		int x = st.top();
+		st.pop();
+
+		for(int i=0; i<a[x].size(); i++) {
+			if(visited[a[x][i]] == 0) {
+				visited[a[x][i]] = x;
+				st.push(a[x][i]);
+			}
+		}
+	}
+}
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 	
-	cin >> s;
-	for(int i=0; i<s.size(); i++) {
-		if (s[i] >= 'A' && s[i] <= 'Z') {
-			cout << s[i];
-			continue;
-		}
-		
-		if(s[i] == '(') {
-			st.push(s[i]);
-		}
-		else if(s[i] == ')') {
-			while(!st.empty()) {
-				if(st.top() != '(') {
-					cout << st.top();
-					st.pop();
-					continue;
-				}
-				break;
-			}
-			st.pop();
-		}
-		else if(s[i] == '/' || s[i] == '*') {
-			while(!st.empty()) {
-				if(st.top() == '/' || st.top() == '*') {
-					cout << st.top();
-					st.pop();
-					continue;
-				}
-				break;
-			}
-			st.push(s[i]);
-		}
-		else if(s[i] == '+' || s[i] == '-') {
-			while(!st.empty()) {
-				if(st.top() != '(') {
-					cout << st.top();
-					st.pop();
-					continue;
-				}
-				break;
-			}
-			st.push(s[i]);
-		}
+	cin >> n;
+	for(int i=0; i<n; i++) {
+		int aa, b;
+		cin >> aa >> b;
+		a[aa].push_back(b);
+		a[b].push_back(aa);
 	}
 
-	while(!st.empty()) {
-		cout << st.top();
-		st.pop();
-	} 
-	cout << "\n";
+	dfs();
+
+	for(int i=2; i<=n; i++) {
+		cout << visited[i] << '\n';
+	}
 
 	return 0;
 }
