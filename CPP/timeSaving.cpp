@@ -1,6 +1,6 @@
 /**************************************************************
 * Time-saving Solution (C&C++)
-* CURRENT	: 	11779
+* CURRENT	: 	14938
 * RETRY     :   0
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -15,15 +15,16 @@ constexpr int INF = 987654321;
 typedef long long ll;
 typedef unsigned long long ull;
 
-#define MAXN 1010
+#define MAXN 101
 
-int n, m, v1, v2;
+int n, m, r;
 vector<pair<int, int>> a[MAXN];
-stack<int> ans;
 int d[MAXN];
-int l[MAXN];
+int item[MAXN];
+int sc, ans = -1;
 
 void init() {
+    sc = 0;
     for(int i=1; i<=n; i++) {
         d[i] = INF;
     }
@@ -32,6 +33,7 @@ void init() {
 void dijkstra(int s) {
     priority_queue<pair<int, int>> pq;
     pq.push({0, s});
+    d[s] = 0;
     
     while(!pq.empty()) {
         int cur = pq.top().second;
@@ -49,39 +51,37 @@ void dijkstra(int s) {
             if(ndist < d[next]) {
                 d[next] = ndist;
                 pq.push({-ndist, next});
-                l[next] = cur;
             }
         }
     }
 }
 
 int main() {
-    scanf("%d", &n);
-    scanf("%d", &m);
+    scanf("%d %d %d", &n, &m, &r);
 
-    for(int i=0; i<m; i++) {
+    for(int i=1; i<=n; i++) {
+        scanf("%d", &item[i]);
+    }
+
+    for(int i=0; i<r; i++) {
         int aa, b, c;
         scanf("%d %d %d", &aa, &b, &c);
         a[aa].push_back({b, c});
+        a[b].push_back({aa, c});
     }
-    scanf("%d %d", &v1, &v2);
 
-    init();
-    dijkstra(v1);
-    printf("%d\n", d[v2]);
-    while(true) {
-        ans.push(v2);
-        if(v2 == v1) {
-            break;
+    for(int i=1; i<=n; i++) {
+        init();
+        dijkstra(i);
+        for(int j=1; j<=n; j++) {
+            if(d[j] <= m) {
+                sc += item[j];
+            }
         }
-        v2 = l[v2];
+        ans = max(ans, sc);
     }
-    printf("%d\n", ans.size());
-    while(!ans.empty()) {
-        printf("%d ", ans.top());
-        ans.pop();
-    }
-    printf("\n");
+    
+    printf("%d\n", ans);
 
     return 0;
 }
