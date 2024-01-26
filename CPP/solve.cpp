@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	13549
+* CURRENT	: 	15654
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -20,43 +20,31 @@ typedef unsigned long long ull;
 
 #define pii pair<int,int>
 #define NOP ;
-#define MAXN 100010
+#define MAXN 9
 
 int n, m;
-priority_queue<pair<int, int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+int a[MAXN];
+int b[MAXN];
 int visited[MAXN];
 
-void bfs() {
-	pq.push({0, n});
-	visited[n] = true;
-
-	while(!pq.empty()) {
-		int cnt = pq.top().first;
-		int cur = pq.top().second;
-		pq.pop();
-
-		if(cur == m) {
-			cout << cnt << "\n";
+void find(int l) {
+	if(l == m) {
+		for(int i=0; i<m; i++) {
+			cout << a[i] << " ";
 		}
+		cout << "\n";
+		return;
+	}
 
-		int dlx = cur * 2;
-		if(dlx <= MAXN-10 && !visited[dlx]) {
-			pq.push({cnt, dlx});
-			visited[dlx] = true;
-		}
-
-		int neg = cur - 1;
-		if(neg >= 0 && !visited[neg]) {
-			pq.push({cnt+1, neg});
-			visited[neg] = true;
-		}
-
-		int pos = cur + 1;
-		if(pos <= MAXN-10 && !visited[pos]) {
-			pq.push({cnt+1, pos});
-			visited[pos] = true;
+	for(int i=0; i<n; i++) {
+		if (!visited[i]) {
+			a[l] = b[i];
+			visited[i] = true;
+			find(l+1);
+			visited[i] = false;
 		}
 	}
+
 }
 
 int main() {
@@ -64,7 +52,12 @@ int main() {
 	cin.tie(0); cout.tie(0);
 	
 	cin >> n >> m;
-	bfs();
+	for(int i=0; i<n; i++) {
+		cin >> b[i];
+	}
+
+	sort(b, b+n);
+	find(0);
 
 	return 0;
 }
