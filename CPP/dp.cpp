@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	24416
+* CURRENT	: 	9184
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -21,40 +21,41 @@ typedef unsigned long long ull;
 
 #define pii pair<int,int>
 #define NOP ;
-#define MAXN 41
+#define MAXN 50
 
-int dp[MAXN];
-int n, c1 = 0, c2 = 0;
+int dp[MAXN][MAXN][MAXN];
+int a, b, c;
 
-int recursion(int n) {
-    if(n == 1 || n == 2) {
+int w(int a, int b, int c)
+{
+	if (a <= 0 || b <= 0 || c <= 0) 
         return 1;
-    }
-    else {
-        c1++;
-        return (recursion(n-1) + recursion(n-2));
-    }
+	else if (a > 20 || b > 20 || c > 20) 
+		return w(20, 20, 20);
+	else if (a < b && b < c) {
+		if (dp[a][b][c] != 0) 
+            return dp[a][b][c];
+		else return dp[a][b][c] = w(a, b, c-1) + w(a, b-1, c-1) - w(a, b-1, c);
+	}
+	else {
+		if (dp[a][b][c] != 0) 
+            return dp[a][b][c];
+		else return dp[a][b][c] = w(a-1, b, c) + w(a-1, b-1, c) + w(a-1, b, c-1) - w(a-1, b-1, c-1);
+	}
 }
-
-void dps(int n) {
-    dp[1] = 1;
-    dp[2] = 2;
-    for(int i=3; i<=n; i++) {
-        c2++;
-        dp[i] = dp[i-1] + dp[i-2];
-    }
-}
-
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
+    memset(dp, 0, sizeof(dp));
     
-    c1++;
-    cin >> n;
-    recursion(n);
-    dps(n);
-    cout << c1 << " " << c2 << "\n";
+    for(;;) {
+        cin >> a >> b >> c;
+        if(a == -1 && b == -1 && c == -1) {
+            break;
+        }
+        cout << "w(" << a << ", " << b << ", " << c << ") = " << w(a, b, c) << "\n";
+    }
 
 	return 0;
 }
