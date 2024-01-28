@@ -1,0 +1,1 @@
+{"name":"Local: dp","url":"/workspaces/AC/CPP/dp.cpp","tests":[{"id":1706412743472,"input":"5","output":"5 3"},{"id":1706412752302,"input":"30","output":"832040 28"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/workspaces/AC/CPP/dp.cpp","group":"local","local":true}
