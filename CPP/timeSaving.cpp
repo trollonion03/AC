@@ -1,6 +1,6 @@
 /**************************************************************
 * Time-saving Solution (C&C++)
-* CURRENT	: 	14938
+* CURRENT	: 	10282
 * RETRY     :   0
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -15,31 +15,25 @@ constexpr int INF = 987654321;
 typedef long long ll;
 typedef unsigned long long ull;
 
-#define MAXN 101
+#define MAXN 50001
 
-int n, m, r;
-vector<pair<int, int>> a[MAXN];
-int d[MAXN];
-int item[MAXN];
-int sc, ans = -1;
+int t, n, m, r;
 
-void init() {
-    sc = 0;
+void dijkstra(int s, vector<pair<int, int>> *a) {
+    int sec = 0, cnt = 0;
+    int d[MAXN];
     for(int i=1; i<=n; i++) {
         d[i] = INF;
     }
-}
-
-void dijkstra(int s) {
     priority_queue<pair<int, int>> pq;
     pq.push({0, s});
     d[s] = 0;
-    
+
     while(!pq.empty()) {
         int cur = pq.top().second;
         int dist = -pq.top().first;
         pq.pop();
-        
+
         if(d[cur] < dist) {
             continue;
         }
@@ -47,41 +41,35 @@ void dijkstra(int s) {
         for(int i=0; i<a[cur].size(); i++) {
             int next = a[cur][i].first;
             int ndist = dist + a[cur][i].second;
-            
+
             if(ndist < d[next]) {
                 d[next] = ndist;
                 pq.push({-ndist, next});
             }
         }
     }
+
+    for(int i=1; i<=n; i++) {
+        if(d[i] != INF) {
+            cnt++;
+            sec = max(d[i], sec);
+        }
+    }
+    printf("%d %d\n", cnt, sec);
 }
 
 int main() {
-    scanf("%d %d %d", &n, &m, &r);
-
-    for(int i=1; i<=n; i++) {
-        scanf("%d", &item[i]);
-    }
-
-    for(int i=0; i<r; i++) {
-        int aa, b, c;
-        scanf("%d %d %d", &aa, &b, &c);
-        a[aa].push_back({b, c});
-        a[b].push_back({aa, c});
-    }
-
-    for(int i=1; i<=n; i++) {
-        init();
-        dijkstra(i);
-        for(int j=1; j<=n; j++) {
-            if(d[j] <= m) {
-                sc += item[j];
-            }
+    scanf("%d", &t);
+    for(int i=0; i<t; i++) {
+        vector<pair<int, int>> a[MAXN];
+        scanf("%d %d %d", &n, &m, &r);
+        for(int j=0; j<m; j++) {
+            int aa, b, c;
+            scanf("%d %d %d", &aa, &b, &c);
+            a[b].push_back({aa, c});
         }
-        ans = max(ans, sc);
+        dijkstra(r, a);
     }
-    
-    printf("%d\n", ans);
 
     return 0;
 }
