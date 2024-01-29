@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	9184
+* CURRENT	: 	1904
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -23,39 +23,24 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 50
 
-int dp[MAXN][MAXN][MAXN];
-int a, b, c;
+int n;
+ll tmp;
+vector<ll> vec;
 
-int w(int a, int b, int c)
-{
-	if (a <= 0 || b <= 0 || c <= 0) 
-        return 1;
-	else if (a > 20 || b > 20 || c > 20) 
-		return w(20, 20, 20);
-	else if (a < b && b < c) {
-		if (dp[a][b][c] != 0) 
-            return dp[a][b][c];
-		else return dp[a][b][c] = w(a, b, c-1) + w(a, b-1, c-1) - w(a, b-1, c);
-	}
-	else {
-		if (dp[a][b][c] != 0) 
-            return dp[a][b][c];
-		else return dp[a][b][c] = w(a-1, b, c) + w(a-1, b-1, c) + w(a-1, b, c-1) - w(a-1, b-1, c-1);
-	}
-}
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
-    memset(dp, 0, sizeof(dp));
     
-    for(;;) {
-        cin >> a >> b >> c;
-        if(a == -1 && b == -1 && c == -1) {
-            break;
-        }
-        cout << "w(" << a << ", " << b << ", " << c << ") = " << w(a, b, c) << "\n";
-    }
+    for(int i=0; i<3; i++) {
+		vec.push_back(i);
+	}
+	cin >> n;
+	for(int i=3; i<=n; i++) {
+		tmp = vec[i-1] + vec[i-2];
+		vec.push_back(tmp%15746); 
+	}
+	cout << vec[n] % 15746 << "\n";
 
 	return 0;
 }

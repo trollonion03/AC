@@ -11,7 +11,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
-#include <queue>
+#include <deque>
 #include <sstream>
 
 using namespace std;
@@ -23,11 +23,15 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 9
 
+//https://rubiks-cube-solver.com/fr/
 typedef struct cube {
 	char shape[3][3];
 };
 
+enum CUBE_SHAPE {U, D, F, B, L, R};
+
 cube *CUBE[6]; // U, D, F, B, L, R
+deque<string> tmps[6];
 int n, tc;
 string cmd, tmp;
 /*
@@ -46,11 +50,67 @@ G G G Y Y Y B B B W W W
 void rotateCube(string cmd) {
 	if(cmd[0] == 'U') {
 		if(cmd[1] == '+') {
-			string tmp = "";
-	
+
+			
 
 		}
 		else if(cmd[1] == '-') {
+
+
+		}
+	}
+	else if(cmd[0] == 'D') {
+		if(cmd[1] == '+') {
+
+			
+
+		}
+		else if(cmd[1] == '-') {
+
+
+		}
+	}
+	else if(cmd[0] == 'F') {
+		if(cmd[1] == '+') {
+
+			
+
+		}
+		else if(cmd[1] == '-') {
+
+
+		}
+	}
+	else if(cmd[0] == 'B') {
+		if(cmd[1] == '+') {
+
+			
+
+		}
+		else if(cmd[1] == '-') {
+
+
+		}
+	}
+	else if(cmd[0] == 'L') {
+		if(cmd[1] == '+') {
+
+			
+
+		}
+		else if(cmd[1] == '-') {
+
+
+		}
+	}
+	else if(cmd[0] == 'R') {
+		if(cmd[1] == '+') {
+
+			
+
+		}
+		else if(cmd[1] == '-') {
+
 
 		}
 	}
@@ -108,6 +168,5 @@ int main() {
 			rotateCube(cmd);
 		}
 	}
-
 	return 0;
 }
