@@ -39,11 +39,18 @@ void dfs() {
 			continue;
 		}
 
+		int cnt = a[x].size();
 		for(int i=0; i<a[x].size(); i++) {
+		
 			if(a[x][i] == del) {
+				if(cnt-1 == 0) {
+					cnt-=1;
+					ans++;
+				}
 				continue;
 			}
 			st.push(a[x][i]);
+
 		}
 	}
 }
