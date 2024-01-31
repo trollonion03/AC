@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1068
+* CURRENT	: 	1240
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -20,62 +20,54 @@ typedef unsigned long long ull;
 
 #define pii pair<int,int>
 #define NOP ;
-#define MAXN 51
+#define MAXN 1001
 
-int n, tmp, del, root;
-int ans = 0;
-stack<int> st;
-vector<int> a[MAXN];
+int n, m;
+stack<pii> st;
+vector<pii> a[MAXN];
+bool visited[MAXN];
 
-void dfs() {
-	st.push(root);
+void dfs(int s, int e) {
+	st.push({s, 0});
+	visited[s] = true;
 
 	while(!st.empty()) {
-		int x = st.top();
+		int x = st.top().first;
+		int dist = st.top().second;
 		st.pop();
 
-		if(a[x].size() == 0) {
-			ans++;
-			continue;
+		if(x == e) {
+			cout << dist << "\n";
 		}
-
-		int cnt = a[x].size();
-		for(int i=0; i<a[x].size(); i++) {
 		
-			if(a[x][i] == del) {
-				if(cnt-1 == 0) {
-					cnt-=1;
-					ans++;
-				}
-				continue;
+		for(int i=0; i<a[x].size(); i++) {
+			if(!visited[a[x][i].first]) {
+				st.push({a[x][i].first, dist+a[x][i].second});
+				visited[a[x][i].first] = true;
 			}
-			st.push(a[x][i]);
-
 		}
 	}
+
 }
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n;
-	for(int i=0; i<n; i++) {
-		cin >> tmp;
-		if(tmp == -1)
-			root = i;
-		else 
-			a[tmp].push_back(i);
+	cin >> n >> m;
+	for(int i=0; i<n-1; i++) {
+		int aa, b, c;
+		cin >> aa >> b >> c;
+		a[aa].push_back({b, c});
+		a[b].push_back({aa, c});
 	}
 
-	cin >> del;
-	if(root == del)
-		cout << 0 << "\n";
-	else {
-		dfs();
-		cout << ans << "\n";
-	} 
-
+	for(int i=0; i<m; i++) {
+		int start, end;
+		cin >> start >> end;
+		dfs(start, end);
+		memset(visited, 0, sizeof(visited));
+	}
 	
 	return 0;
 }
