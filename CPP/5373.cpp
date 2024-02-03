@@ -11,7 +11,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
-#include <deque>
+#include <queue>
 #include <sstream>
 
 using namespace std;
@@ -28,14 +28,20 @@ typedef struct cube {
 	char shape[3][3];
 };
 
+typedef struct inst {
+	int shape;		// 면
+	int pos;  		// 행 or 열
+	int type; 		// 1: 세로, 2: 가로
+	int rev;
+};
+
 enum CUBE_SHAPE {U, D, F, B, L, R};
 
 cube *CUBE[6]; // U, D, F, B, L, R
-deque<string> tmps[6];
 int n, tc;
 string cmd, tmp;
 /*
-W 위, G 왼, R 앞, Y 아래, B 오, G 왼 
+W 위(U), G 왼(L), R 앞(F), Y 아래(D), B 오(R), O 뒤(B) 
       O O O
       O O O
       O O O
@@ -47,16 +53,55 @@ G G G Y Y Y B B B W W W
       R R R
 */
 
+void process(queue<inst> *q) {
+	char tmp[4];
+	inst first = q->front();
+	
+	while(!q->empty()) {
+		int cShape = q->front().shape;
+		int cPos = q->front().pos;
+		int cType = q->front().type;
+		q->pop();
+		//next shape
+		int nShape = q->front().shape;
+		int nPos = q->front().pos;
+		int nType = q->front().type;
+
+		//TODO: U의 경우부터 구현
+		//다음 면의 색 저장
+		for(int i=0; i<3; i++) {
+			if(cType == 1) {
+				tmp[i] = CUBE[nShape]->shape[i][nPos];
+			}
+			else if(cType == 2) {
+				tmp[i] = CUBE[nShape]->shape[nPos][i];
+			}
+		}
+
+
+	}
+}
+
+
+//면 회전에 대해서도 구현해야함
 void rotateCube(string cmd) {
+	queue<inst> q;
 	if(cmd[0] == 'U') {
 		if(cmd[1] == '+') {
-			
-			
-
+			//B1_->L1|->F3_->R3|
+			q.push({B, 1, 2, 0});
+			q.push({L, 1, 1, 0});
+			q.push({F, 3, 2, 0});
+			q.push({R, 3, 1, 0});
+			process(&q);
 		}
 		else if(cmd[1] == '-') {
-			//R3|->F3_->G1|->G1_
-
+			//R3|->F3_->L1|->B1_
+			q.push({R, 3, 1, 0});
+			q.push({F, 3, 2, 0});
+			q.push({L, 1, 1, 0});
+			q.push({B, 1, 2, 0});
+			process(&q);
 		}
 	}
 	else if(cmd[0] == 'D') {
