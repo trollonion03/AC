@@ -1,7 +1,7 @@
 /**************************************************************
 * Time-saving Solution (C&C++)
-* CURRENT	: 	23793
-* RETRY     :   2
+* CURRENT	: 	4485
+* RETRY     :   0
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
@@ -14,80 +14,66 @@ constexpr int INF = 0x3f3f3f3f;
 typedef long long ll;
 typedef unsigned long long ull;
 
-#define MAXN 100001
+#define MAXN 126
 
-int n, m, x, y, z;
-vector<pair<int, int>> a[MAXN];
-int d[MAXN];
-int res1, res2;
+int n;
+int a[MAXN][MAXN];
+int d[MAXN][MAXN];
+int dx[4] = {1, -1, 0, 0};
+int dy[4] = {0, 0, 1, -1};
 
 void init() {
     for(int i=1; i<=n; i++) {
-        d[i] = INF;
+        for(int j=1; j<=n; j++) {
+            d[i][j] = INF;
+        }
     }
 }
 
-void dijkstra(int s, int av) {
+void dijkstra() {
     init();
-    priority_queue<pair<int, int>> pq;
-    pq.push({0, s});
-    d[s] = 0;
+    priority_queue<pair<int, pair<int, int>>> pq;
+    pq.push({-a[1][1], {1, 1}});
+    d[1][1] = a[1][1];
     
     while(!pq.empty()) {
-        int cur = pq.top().second;
+        int x = pq.top().second.first;
+        int y = pq.top().second.second;
         int dist = -pq.top().first;
         pq.pop();
         
-        if(d[cur] < dist) {
+        if(d[x][y] < dist) {
             continue;
         }
 
-        for(int i=0; i<a[cur].size(); i++) {
-            int next = a[cur][i].first;
-            int ndist = dist + a[cur][i].second;
+        for(int i=0; i<4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            int ndist = dist + a[nx][ny];
             
-            if(ndist < d[next] && next != av) {
-                d[next] = ndist;
-                pq.push({-ndist, next});
+            if(nx>0 && ny>0 && nx<=n && ny<=n) {
+                if(ndist < d[nx][ny]) {
+                    d[nx][ny] = ndist;
+                    pq.push({-ndist, {nx, ny}});
+                }
             }
         }
     }
 }
 
 int main() {
-    scanf("%d %d", &n, &m);
-
-    for(int i=0; i<m; i++) {
-        int aa, b, c;
-        scanf("%d %d %d", &aa, &b, &c);
-        a[aa].push_back({b, c});
+    int cnt = 1;
+    while(true) {
+        scanf("%d", &n);
+        if(n == 0) break;
+        for(int i=1; i<=n; i++) {
+            for(int j=1; j<=n; j++) {
+                scanf("%d", &a[i][j]);
+            }
+        }
+        dijkstra();
+        printf("Problem %d: %d\n", cnt++, d[n][n]);
     }
-
-    scanf("%d %d %d", &x, &y, &z);
-
-    
-    dijkstra(x, -1);
-    int t1 = d[y];
-    dijkstra(y, -1);
-    int t2 = d[z];
-    dijkstra(x, y);
-    int t3 = d[z];
-
-
-    if(t1 == INF || t2 == INF) {
-        res1 = -1;
-    }
-    else {
-        res1 = t1+t2;
-    }
-    if(t3 == INF) {
-        res2 = -1;
-    }
-    else {
-        res2 = t3;
-    }
-
-    printf("%d %d\n", res1, res2);
 
     return 0;
 }
