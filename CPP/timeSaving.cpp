@@ -1,7 +1,7 @@
 /**************************************************************
 * Time-saving Solution (C&C++)
-* CURRENT	: 	9505
-* RETRY     :   8
+* CURRENT	: 	13424
+* RETRY     :   4
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
@@ -9,61 +9,47 @@
 #include <queue>
 #include <cstdio>
 #include <cstring>
+#include <algorithm>
 
 using namespace std;
 constexpr int INF = 0x3f3f3f3f;
 typedef long long ll;
 typedef unsigned long long ull;
 
-#define MAXN 1001
+#define MAXN 101
 
-int t, k, w, h;
-int a[MAXN][MAXN];
-int d[MAXN][MAXN];
-int def[27];
-int dx[4] = {1, -1, 0, 0};
-int dy[4] = {0, 0, 1, -1};
-int sx, sy;
+int t, n, m, k;
+int d[MAXN];
+int ans[MAXN];
 
 void init() {
-    for(int i=1; i<=h; i++) {
-        for(int j=1; j<=w; j++) {
-            d[i][j] = INF;
-        }
+    for(int i=1; i<=n; i++) {
+        d[i] = INF;
     }
 }
 
-void dijkstra() {
+void dijkstra(int x, vector<pair<int,int>> *a) {
     init();
-    priority_queue<pair<int, pair<int, int>>> pq;
-    pq.push({-a[sx][sy], {sx, sy}});
-    d[sx][sy] = a[sx][sy];
+    priority_queue<pair<int, int>> pq;
+    pq.push({0, x});
+    d[x] = 0;
     
     while(!pq.empty()) {
-        int x = pq.top().second.first;
-        int y = pq.top().second.second;
+        int cur = pq.top().second;
         int dist = -pq.top().first;
         pq.pop();
         
-        if(d[x][y] < dist) {
+        if(d[cur] < dist) {
             continue;
         }
 
-        if(x == h || x == 1 || y == w || y == 1) {
-            printf("%d\n", dist);
-            return;
-        }
-
-        for(int i=0; i<4; i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            int ndist = dist + a[nx][ny];
+        for(int i=0; i<a[cur].size(); i++) {
+            int next = a[cur][i].first;
+            int ndist = dist + a[cur][i].second;
             
-            if(nx>0 && ny>0 && nx<=h && ny<=w) {
-                if(ndist < d[nx][ny]) {
-                    d[nx][ny] = ndist;
-                    pq.push({-ndist, {nx, ny}});
-                }
+            if(ndist < d[next]) {
+                d[next] = ndist;
+                pq.push({-ndist, next});
             }
         }
     }
@@ -71,26 +57,39 @@ void dijkstra() {
 
 int main() {
     scanf("%d", &t);
-    for(int m=0; m<t; m++) {
-        scanf("%d %d %d", &k, &w, &h);
-        for(int i=0; i<k; i++) {
-            char ch; int bb;
-            scanf(" %c %d", &ch, &bb);
-            def[ch-'A'] = bb;
+    while(t--) {
+        vector<pair<int, int>> a[MAXN];
+        vector<int> r;
+        scanf("%d %d", &n, &m);
+        for(int i=0; i<m; i++) {
+            int aa, b, c;
+            scanf("%d %d %d", &aa, &b, &c);
+            a[aa].push_back({b, c});
+            a[b].push_back({aa, c});
         }
-        for(int i=1; i<=h; i++) {
-            for(int j=1; j<=w; j++) {
-                char ch;
-                scanf(" %c", &ch);
-                a[i][j] = def[ch-'A'];
-                if(ch == 'E') {
-                    sx = i;
-                    sy = j;
-                }
+        scanf("%d", &k);
+        for(int i=0; i<k; i++) {
+            int tmp;
+            scanf("%d", &tmp);
+            r.push_back(tmp);
+        }
+        for(int i=0; i<k; i++) {
+            dijkstra(r[i], a);
+            for(int j=1; j<=n; j++) {
+                ans[j] += d[j];
             }
         }
-        dijkstra();
-    }
+        int val = INF;
+        int num = 0;
+        for(int i=1; i<=n; i++) {
+            if(ans[i] < val) {
+                num = i;
+                val = ans[i];
+            }
+        }
+        printf("%d\n", num);
 
+        memset(ans, 0, sizeof(ans));
+    }
     return 0;
 }
