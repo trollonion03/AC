@@ -1,7 +1,7 @@
 /**************************************************************
 * Time-saving Solution (C&C++)
-* CURRENT	: 	13424
-* RETRY     :   4
+* CURRENT	: 	20007
+* RETRY     :   3
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
@@ -16,19 +16,21 @@ constexpr int INF = 0x3f3f3f3f;
 typedef long long ll;
 typedef unsigned long long ull;
 
-#define MAXN 101
+#define MAXN 1001
 
-int t, n, m, k;
+int n, m, x, y;
+int sum = 0, day = 1;
+vector<pair<int, int>> a[MAXN];
 int d[MAXN];
 int ans[MAXN];
 
 void init() {
-    for(int i=1; i<=n; i++) {
+    for(int i=0; i<n; i++) {
         d[i] = INF;
     }
 }
 
-void dijkstra(int x, vector<pair<int,int>> *a) {
+void dijkstra(int x) {
     init();
     priority_queue<pair<int, int>> pq;
     pq.push({0, x});
@@ -56,40 +58,30 @@ void dijkstra(int x, vector<pair<int,int>> *a) {
 }
 
 int main() {
-    scanf("%d", &t);
-    while(t--) {
-        vector<pair<int, int>> a[MAXN];
-        vector<int> r;
-        scanf("%d %d", &n, &m);
-        for(int i=0; i<m; i++) {
-            int aa, b, c;
-            scanf("%d %d %d", &aa, &b, &c);
-            a[aa].push_back({b, c});
-            a[b].push_back({aa, c});
-        }
-        scanf("%d", &k);
-        for(int i=0; i<k; i++) {
-            int tmp;
-            scanf("%d", &tmp);
-            r.push_back(tmp);
-        }
-        for(int i=0; i<k; i++) {
-            dijkstra(r[i], a);
-            for(int j=1; j<=n; j++) {
-                ans[j] += d[j];
-            }
-        }
-        int val = INF;
-        int num = 0;
-        for(int i=1; i<=n; i++) {
-            if(ans[i] < val) {
-                num = i;
-                val = ans[i];
-            }
-        }
-        printf("%d\n", num);
-
-        memset(ans, 0, sizeof(ans));
+    scanf("%d %d %d %d", &n, &m, &x, &y);
+    for(int i=0; i<m; i++) {
+        int aa, b, c;
+        scanf("%d %d %d", &aa, &b, &c);
+        a[aa].push_back({b, c});
+        a[b].push_back({aa, c});
     }
+    dijkstra(y);
+    for(int i=0; i<n; i++) {
+        if(d[i]*2 > x) {
+            printf("-1\n");
+            return 0;
+        }
+    }
+    sort(d, d+n);
+    for(int i=0; i<n; i++) {
+        if(sum + d[i] * 2 <= x) {
+            sum += d[i]*2;
+        }
+        else {
+            day++;
+            sum = 2*d[i];
+        }
+    }
+    printf("%d\n", day);
     return 0;
 }
