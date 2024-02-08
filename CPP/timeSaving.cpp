@@ -1,7 +1,7 @@
 /**************************************************************
 * Time-saving Solution (C&C++)
-* CURRENT	: 	20007
-* RETRY     :   3
+* CURRENT	: 	1719
+* RETRY     :   0
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
@@ -16,16 +16,16 @@ constexpr int INF = 0x3f3f3f3f;
 typedef long long ll;
 typedef unsigned long long ull;
 
-#define MAXN 1001
+#define MAXN 201
 
-int n, m, x, y;
-int sum = 0, day = 1;
+int n, m;
 vector<pair<int, int>> a[MAXN];
 int d[MAXN];
 int ans[MAXN];
+int log[MAXN];
 
 void init() {
-    for(int i=0; i<n; i++) {
+    for(int i=1; i<=n; i++) {
         d[i] = INF;
     }
 }
@@ -50,6 +50,13 @@ void dijkstra(int x) {
             int ndist = dist + a[cur][i].second;
             
             if(ndist < d[next]) {
+                // log[next] = cur;
+                if(cur == x) {
+                    log[next] = next;
+                }
+                else {
+                    log[next] = log[cur];
+                }
                 d[next] = ndist;
                 pq.push({-ndist, next});
             }
@@ -58,30 +65,25 @@ void dijkstra(int x) {
 }
 
 int main() {
-    scanf("%d %d %d %d", &n, &m, &x, &y);
+    scanf("%d %d", &n, &m);
     for(int i=0; i<m; i++) {
         int aa, b, c;
         scanf("%d %d %d", &aa, &b, &c);
         a[aa].push_back({b, c});
         a[b].push_back({aa, c});
     }
-    dijkstra(y);
-    for(int i=0; i<n; i++) {
-        if(d[i]*2 > x) {
-            printf("-1\n");
-            return 0;
+    for(int i=1; i<=n; i++) {
+        dijkstra(i);
+        for(int j=1; j<=n; j++) {
+            if(j != i) {
+                printf("%d ", log[j]);
+            }
+            else {
+                printf("- ");
+            }
         }
+        printf("\n");
     }
-    sort(d, d+n);
-    for(int i=0; i<n; i++) {
-        if(sum + d[i] * 2 <= x) {
-            sum += d[i]*2;
-        }
-        else {
-            day++;
-            sum = 2*d[i];
-        }
-    }
-    printf("%d\n", day);
+    
     return 0;
 }
