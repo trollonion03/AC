@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1240
+* CURRENT	: 	1717
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -20,53 +20,64 @@ typedef unsigned long long ull;
 
 #define pii pair<int,int>
 #define NOP ;
-#define MAXN 1001
+#define MAXN 1000001
 
 int n, m;
-stack<pii> st;
-vector<pii> a[MAXN];
-bool visited[MAXN];
+int p[MAXN];
+int a, b, c;
 
-void dfs(int s, int e) {
-	st.push({s, 0});
-	visited[s] = true;
-
-	while(!st.empty()) {
-		int x = st.top().first;
-		int dist = st.top().second;
-		st.pop();
-
-		if(x == e) {
-			cout << dist << "\n";
-		}
-		
-		for(int i=0; i<a[x].size(); i++) {
-			if(!visited[a[x][i].first]) {
-				st.push({a[x][i].first, dist+a[x][i].second});
-				visited[a[x][i].first] = true;
-			}
-		}
+void init() {
+	for(int i=1; i<=n; i++) {
+		p[i] = i;
 	}
+}
+
+int find_r(int x) {
+	if(x == p[x])
+		return x;
+	return p[x] = find_r(p[x]);
+}
+
+bool check_union(int x, int y) {
+	x = find_r(x);
+	y = find_r(y);
+	if(x == y) {
+		return true;
+	}
+	return false;
 
 }
+
+void union_r(int x, int y) {
+	x = find_r(x);
+	y = find_r(y);
+	if(x>y) {
+		p[x] = y;
+		return;
+	}
+	p[y] = x;
+}
+
+
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
 	cin >> n >> m;
-	for(int i=0; i<n-1; i++) {
-		int aa, b, c;
-		cin >> aa >> b >> c;
-		a[aa].push_back({b, c});
-		a[b].push_back({aa, c});
-	}
-
+	init();
 	for(int i=0; i<m; i++) {
-		int start, end;
-		cin >> start >> end;
-		dfs(start, end);
-		memset(visited, 0, sizeof(visited));
+		cin >> a >> b >> c;
+		if(a) {
+			bool flag = check_union(b, c);
+			if(flag)
+				cout << "YES\n";
+			else
+				cout << "NO\n";
+		}
+		else {
+			union_r(b, c);
+		}
 	}
 	
 	return 0;
