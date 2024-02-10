@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1717
+* CURRENT	: 	1197
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -20,11 +20,12 @@ typedef unsigned long long ull;
 
 #define pii pair<int,int>
 #define NOP ;
-#define MAXN 1000001
+#define MAXN 10100
 
-int n, m;
+int n, m, ans = 0;
 int p[MAXN];
-int a, b, c;
+vector<pair<int, pii>> a;
+vector<pair<int, pii>> mst;
 
 void init() {
 	for(int i=1; i<=n; i++) {
@@ -38,27 +39,30 @@ int find_r(int x) {
 	return p[x] = find_r(p[x]);
 }
 
-bool check_union(int x, int y) {
-	x = find_r(x);
-	y = find_r(y);
-	if(x == y) {
-		return true;
-	}
-	return false;
-
-}
-
 void union_r(int x, int y) {
 	x = find_r(x);
 	y = find_r(y);
-	if(x>y) {
-		p[x] = y;
-		return;
-	}
-	p[y] = x;
+	
+	if(x != y)
+		p[y] = x;
 }
 
+void kruskal() {
+	for(int i=0; i<a.size(); i++) {
+		pair<int, pii> cur = a[i];
 
+		int f = cur.second.first;
+		int s = cur.second.second;
+
+		if(find_r(f) == find_r(s))
+			continue;
+		mst.push_back(cur);
+		union_r(f, s);
+
+		if(mst.size() == n-1)
+			return;
+	}
+}
 
 int main() {
 	ios_base::sync_with_stdio(0);
@@ -67,18 +71,16 @@ int main() {
 	cin >> n >> m;
 	init();
 	for(int i=0; i<m; i++) {
-		cin >> a >> b >> c;
-		if(a) {
-			bool flag = check_union(b, c);
-			if(flag)
-				cout << "YES\n";
-			else
-				cout << "NO\n";
-		}
-		else {
-			union_r(b, c);
-		}
+		int aa, b, c;
+		cin >> aa >> b >> c;
+		a.push_back({c, {aa, b}});
 	}
+	sort(a.begin(), a.end());
+	kruskal();
+	for(int i=0; i<mst.size(); i++) {
+		ans += mst[i].first;
+	}
+	cout << ans << "\n";
 	
 	return 0;
 }
