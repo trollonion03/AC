@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1197
+* CURRENT	: 	1647
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -20,7 +20,7 @@ typedef unsigned long long ull;
 
 #define pii pair<int,int>
 #define NOP ;
-#define MAXN 10100
+#define MAXN 100001
 
 int n, m, ans = 0;
 int p[MAXN];
@@ -77,7 +77,7 @@ int main() {
 	}
 	sort(a.begin(), a.end());
 	kruskal();
-	for(int i=0; i<mst.size(); i++) {
+	for(int i=0; i<mst.size()-1; i++) {
 		ans += mst[i].first;
 	}
 	cout << ans << "\n";
