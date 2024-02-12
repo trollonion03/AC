@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1647
+* CURRENT	: 	10775
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -22,13 +22,12 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 100001
 
-int n, m, ans = 0;
+int g, f, d;
+int ans = 0;
 int p[MAXN];
-vector<pair<int, pii>> a;
-vector<pair<int, pii>> mst;
 
-void init() {
-	for(int i=1; i<=n; i++) {
+void init(size_t sz) {
+	for(int i=1; i<=sz; i++) {
 		p[i] = i;
 	}
 }
@@ -42,45 +41,37 @@ int find_r(int x) {
 void union_r(int x, int y) {
 	x = find_r(x);
 	y = find_r(y);
-	
-	if(x != y)
+
+	if(x>y) {
+		p[x] = y;
+	}
+	else {
 		p[y] = x;
-}
-
-void kruskal() {
-	for(int i=0; i<a.size(); i++) {
-		pair<int, pii> cur = a[i];
-
-		int f = cur.second.first;
-		int s = cur.second.second;
-
-		if(find_r(f) == find_r(s))
-			continue;
-		mst.push_back(cur);
-		union_r(f, s);
-
-		if(mst.size() == n-1)
-			return;
 	}
 }
+
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m;
-	init();
-	for(int i=0; i<m; i++) {
-		int aa, b, c;
-		cin >> aa >> b >> c;
-		a.push_back({c, {aa, b}});
+	cin >> g; 
+	cin >> f;
+	init(g);
+
+	for(int i=0; i<f; i++) {
+		cin >> d;
+
+		int tmp = find_r(d);
+		if(tmp) {
+			ans++;
+			union_r(tmp, tmp-1);
+			continue;
+		}
+
+		break;
 	}
-	sort(a.begin(), a.end());
-	kruskal();
-	for(int i=0; i<mst.size()-1; i++) {
-		ans += mst[i].first;
-	}
+
 	cout << ans << "\n";
-	
 	return 0;
 }
