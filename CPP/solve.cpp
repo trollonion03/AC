@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	20040
+* CURRENT	: 	4195
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <string>
+#include <map>
 #include <vector>
 #include <stack>
 
@@ -21,49 +22,68 @@ typedef unsigned long long ull;
 #define pii pair<int, int>
 #define pip pair<int, pii>
 #define NOP ;
-#define MAXN 1000001
+#define MAXN 200001
 
+int t, f;
+string tmp1, tmp2;
+map<string, int> m;
 int p[MAXN];
-int n, m;
-int ans = 0;
+int fnum[MAXN];
 
-void init(int x) {
-	for(int i=0; i<x; i++) {
+void init(size_t s) {
+	for(int i=0; i<=s*2; i++) {
 		p[i] = i;
+		fnum[i] = 1;
 	}
 }
 
 int find_r(int x) {
-	if(p[x] == x)
+	if(x == p[x])
 		return x;
 	return p[x] = find_r(p[x]);
 }
 
-bool union_r(int x, int y) {
+void union_r(int x, int y) {
 	x = find_r(x);
 	y = find_r(y);
-
-	if(x != y) {
+	if(x > y) {
 		p[x] = y;
-		return false;
+		fnum[y] += fnum[x];
 	}
-	return true;
+	else if(x < y) {
+		p[y] = x;
+		fnum[x] += fnum[y];
+	}
 }
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m;
-	init(n);
-	for(int i=0; i<m; i++) {
-		int a, b;
-		cin >> a >> b;
-		if(union_r(a, b)) {
-			ans = i+1;
-			break;
+	cin >> t;
+	while(t--) {
+		m.clear();
+		int idx = 0, a=0, b=0;
+		cin >> f;
+		init(f);
+		for(int i=0; i<f; i++) {
+			cin >> tmp1 >> tmp2;
+			
+			if(m.find(tmp1) == m.end()) {
+				m[tmp1] = ++idx;
+			}
+			a = m[tmp1];
+
+			if(m.find(tmp2) == m.end()) {
+				m[tmp2] = ++idx;
+			}
+			b = m[tmp2];
+			
+			union_r(a, b);
+			int index = find_r(a);
+			cout << fnum[index] << "\n";	
 		}
 	}
-	cout << ans << "\n";
+	
 	return 0;
 }
