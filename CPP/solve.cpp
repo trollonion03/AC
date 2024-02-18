@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	4195
+* CURRENT	: 	17387
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -24,66 +24,56 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 200001
 
-int t, f;
-string tmp1, tmp2;
-map<string, int> m;
-int p[MAXN];
-int fnum[MAXN];
+typedef struct pos {
+	ll x;
+	ll y;
+};
 
-void init(size_t s) {
-	for(int i=0; i<=s*2; i++) {
-		p[i] = i;
-		fnum[i] = 1;
-	}
+pos p1, p2, p3, p4;
+int a, b, c, d;
+bool ans;
+
+int ccw(pos p1, pos p2, pos p3) {
+	ll tmp = (p2.x-p1.x) * (p3.y-p1.y) - (p3.x-p1.x) * (p2.y - p1.y);
+	if(tmp > 0)
+		return 1;
+	if(tmp < 0)
+		return -1;
+	return 0;
 }
 
-int find_r(int x) {
-	if(x == p[x])
-		return x;
-	return p[x] = find_r(p[x]);
-}
-
-void union_r(int x, int y) {
-	x = find_r(x);
-	y = find_r(y);
-	if(x > y) {
-		p[x] = y;
-		fnum[y] += fnum[x];
-	}
-	else if(x < y) {
-		p[y] = x;
-		fnum[x] += fnum[y];
-	}
+bool checkLine(int a, int b, int c, int d) {
+	if(a > b)
+		swap(a, b);
+	if(c > d)
+		swap(c, d);
+	bool n = a<=d && b>=c;
+	bool m = c<=b && d>=a;
+	return n || m;
 }
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> t;
-	while(t--) {
-		m.clear();
-		int idx = 0, a=0, b=0;
-		cin >> f;
-		init(f);
-		for(int i=0; i<f; i++) {
-			cin >> tmp1 >> tmp2;
-			
-			if(m.find(tmp1) == m.end()) {
-				m[tmp1] = ++idx;
-			}
-			a = m[tmp1];
+	cin >> p1.x >> p1.y >> p2.x >> p2.y;
+	cin >> p3.x >> p3.y >> p4.x >> p4.y;
 
-			if(m.find(tmp2) == m.end()) {
-				m[tmp2] = ++idx;
-			}
-			b = m[tmp2];
-			
-			union_r(a, b);
-			int index = find_r(a);
-			cout << fnum[index] << "\n";	
-		}
+	a = ccw(p1, p2, p3);
+	b = ccw(p1, p2, p4);
+	c = ccw(p3, p4, p1);
+	d = ccw(p3, p4, p2);
+
+	if(a*b == 0 && c*d == 0)
+		ans = checkLine(p1.x, p2.x, p3.x, p4.x) && checkLine(p1.y, p2.y, p3.y, p4.y);
+	else {
+		bool tmp1, tmp2;
+		tmp1 = a*b <= 0;
+		tmp2 = c*d <= 0;
+		ans = tmp1 && tmp2;
 	}
+
+	cout << ans << "\n";
 	
 	return 0;
 }
