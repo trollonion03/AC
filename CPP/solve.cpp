@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	17387
+* CURRENT	: 	1202
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -12,7 +12,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <stack>
+#include <queue>
 
 using namespace std;
 constexpr int INF = 0x3f3f3f3f;
@@ -22,58 +22,46 @@ typedef unsigned long long ull;
 #define pii pair<int, int>
 #define pip pair<int, pii>
 #define NOP ;
-#define MAXN 200001
+#define MAXN 300001
 
-typedef struct pos {
-	ll x;
-	ll y;
-};
-
-pos p1, p2, p3, p4;
-int a, b, c, d;
-bool ans;
-
-int ccw(pos p1, pos p2, pos p3) {
-	ll tmp = (p2.x-p1.x) * (p3.y-p1.y) - (p3.x-p1.x) * (p2.y - p1.y);
-	if(tmp > 0)
-		return 1;
-	if(tmp < 0)
-		return -1;
-	return 0;
-}
-
-bool checkLine(int a, int b, int c, int d) {
-	if(a > b)
-		swap(a, b);
-	if(c > d)
-		swap(c, d);
-	bool n = a<=d && b>=c;
-	bool m = c<=b && d>=a;
-	return n || m;
-}
+int n, k, cap = 0;
+priority_queue<int, vector<int>, less<int>> pq;
+vector<int> bag;
+vector<pii> tgt;
+ll ans = 0;
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> p1.x >> p1.y >> p2.x >> p2.y;
-	cin >> p3.x >> p3.y >> p4.x >> p4.y;
+	cin >> n >> k;
+	for(int i=0; i<n; i++) {
+		int a, b;
+		cin >> a >> b;
+		tgt.push_back({a, b});
+	}
 
-	a = ccw(p1, p2, p3);
-	b = ccw(p1, p2, p4);
-	c = ccw(p3, p4, p1);
-	d = ccw(p3, p4, p2);
+	for(int i=0; i<k; i++) {
+		int a;
+		cin >> a;
+		bag.push_back(a);
+	}
 
-	if(a*b == 0 && c*d == 0)
-		ans = checkLine(p1.x, p2.x, p3.x, p4.x) && checkLine(p1.y, p2.y, p3.y, p4.y);
-	else {
-		bool tmp1, tmp2;
-		tmp1 = a*b <= 0;
-		tmp2 = c*d <= 0;
-		ans = tmp1 && tmp2;
+	sort(tgt.begin(), tgt.end());
+	sort(bag.begin(), bag.end());
+
+	for(int i=0; i<bag.size(); i++) {
+		while(cap < n && tgt[cap].first <= bag[i]) {
+			pq.push(tgt[cap].second);
+			cap++;
+		}
+		if(!pq.empty()) {
+			ans += pq.top();
+			pq.pop();
+		}
 	}
 
 	cout << ans << "\n";
-	
+
 	return 0;
 }
