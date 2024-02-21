@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	2162
+* CURRENT	: 	4386
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <string>
+#include <cmath>
 #include <map>
 #include <vector>
 #include <queue>
@@ -21,39 +22,21 @@ typedef unsigned long long ull;
 
 #define pii pair<int, int>
 #define pip pair<int, pii>
+#define pdd pair<double, double>
+#define pff pair<float, float>
 #define NOP ;
-#define MAXN 3001
+#define MAXN 101
 
-typedef struct pos {
-	double x;
-	double y;
-};
-
-pos p1, p2, p3, p4;
 int n;
-int x1, y1, x2, y2;
 int p[MAXN];
-bool ans;
-vector<int> a[MAXN];
-vector<pos> g1;
-vector<pos> g2;
-queue<int> q;
-bool visited[MAXN];
-int ans1 = 0, ans2 = -1;
+vector<pff> a;
+vector<pair<float, pii>> b;
+float ans = 0;
 
 void init(int x) {
 	for(int i=0; i<=n; i++) {
 		p[i] = i;
 	}
-}
-
-int ccw(pos p1, pos p2, pos p3) {
-	double tmp = (p2.x-p1.x) * (p3.y-p1.y) - (p3.x-p1.x) * (p2.y - p1.y);
-	if(tmp > 0)
-		return 1;
-	if(tmp < 0)
-		return -1;
-	return 0;
 }
 
 int find_r(int x) {
@@ -62,62 +45,32 @@ int find_r(int x) {
 	return p[x] = find_r(p[x]);
 }
 
-bool union_r(int x, int y) {
+void union_r(int x, int y) {
 	x = find_r(x);
 	y = find_r(y);
 
-	if(x != y) {
+	if(x > y) {
 		p[x] = y;
-
-		a[x].push_back(y);
-		a[y].push_back(x);
-		return true;
-	}
-	return false;
-}
-
-bool checkLine(int a, int b, int c, int d) {
-	if(a > b)
-		swap(a, b);
-	if(c > d)
-		swap(c, d);
-	bool n = a<=d && b>=c;
-	bool m = c<=b && d>=a;
-	return n || m;
-}
-
-bool check(pos p1, pos p2, pos p3, pos p4) { 
-	int t1 = ccw(p1, p2, p3);
-	int t2 = ccw(p1, p2, p4);
-	int t3 = ccw(p3, p4, p1);
-	int t4 = ccw(p3, p4, p2);
-
-	if(t1*t2 == 0 && t3*t4 == 0) {
-		return  checkLine(p1.x, p2.x, p3.x, p4.x) && checkLine(p1.y, p2.y, p3.y, p4.y);
 	}
 	else {
-		return (t1*t2<=0) && (t3*t4<=0);
+		p[y] = x;
 	}
 }
 
-int bfs(int x) {
-	int tmp = 1;
-	q.push(x);
-	visited[x] = true;
+float kruskal() {
+	float rtn = 0;
+	for(int i=0; i<b.size(); i++) {
+		pair<float, pii> tmp = b[i];
 
-	while(!q.empty()) {
-		int cur = q.front();
-		q.pop();
+		int f = tmp.second.first;
+		int s = tmp.second.second;
 
-		for(int i=0; i<a[cur].size(); i++) {
-			if(!visited[a[cur][i]]) {
-				tmp++;
-				q.push(a[cur][i]);
-				visited[a[cur][i]] = true;
-			}
-		}
+		if(find_r(f) == find_r(s))
+			continue;
+		union_r(f, s);
+		rtn += tmp.first;
 	}
-	return tmp;
+	return rtn;
 }
 
 int main() {
@@ -127,27 +80,26 @@ int main() {
 	cin >> n;
 	init(n);
 	for(int i=0; i<n; i++) {
-		cin >> x1 >> y1 >> x2 >> y2;
-		g1.push_back({(double)x1, (double)y1});
-		g2.push_back({(double)x2, (double)y2});
+		float t1, t2;
+		cin >> t1 >> t2;
+		a.push_back({t1, t2});
 	}
 
 	for(int i=0; i<n; i++) {
-		for(int j=0; j<n; j++) {
-			if(check(g1[i], g2[i], g1[j], g2[j])) {
-				union_r(i, j);
-			}
+		for(int j=i+1; j<n; j++) {
+			pdd t1 = a[i], t2 = a[j];
+			float dst = pow(t2.first - t1.first, 2) + pow(t2.second - t1.second, 2);
+            dst = sqrtf(dst);
+			b.push_back(make_pair(dst, make_pair(i, j)));
 		}
 	}
 
-	for(int i=0; i<n; i++) {
-		if(!visited[i])	{
-			ans1++;
-			ans2 = max(ans2, bfs(i));
-		}
-	}
+	sort(b.begin(), b.end());
+	ans = kruskal();
 
-	cout << ans1 << "\n" << ans2 << "\n"; 
+	cout << fixed;
+	cout.precision(2);
+	cout << ans << "\n";
 
 	return 0;
 }
