@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	16202
+* CURRENT	: 	4963
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -13,7 +13,7 @@
 #include <cmath>
 #include <map>
 #include <vector>
-#include <deque>
+#include <queue>
 
 using namespace std;
 constexpr int INF = 0x3f3f3f3f;
@@ -25,89 +25,63 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 1001
+#define MAXN 51
 
-int n, m, k;
-int p[MAXN];
-vector<pair<int, pii>> a;
-int ans = 0, c = 0;
+int t, n, m;
+int a[MAXN][MAXN];
+bool visited[MAXN][MAXN];
+queue<pii> q;
+int dx[8] = {1, 0, -1, 0, 1, 1, -1, -1};
+int dy[8] = {0, 1, 0, -1, 1, -1, 1, -1};
 
-void init(int x) {
-	for(int i=0; i<=n; i++) {
-		p[i] = i;
-	}
-}
+void bfs(int x, int y) {
+	q.push({x, y});
+	visited[x][y] = true;
 
-int find_r(int x) {
-	if(p[x] == x)
-		return x;
-	return p[x] = find_r(p[x]);
-}
+	while(!q.empty()) {
+		int cx = q.front().first;
+		int cy = q.front().second;
+		q.pop();
 
-void union_r(int x, int y) {
-	x = find_r(x);
-	y = find_r(y);
+		for(int i=0; i<8; i++) {
+			int nx = cx + dx[i];
+			int ny = cy + dy[i];
 
-	if(x < y) {
-		p[y] = x;
-	}
-	else  {
-		p[x] = y;
-	}
-}
-
-int kruskal() {
-	int rtn = 0, f = 0;
-	for(int i=c; i<a.size(); i++) {
-		pair<int, pii> tmp = a[i];
-
-		int f = tmp.second.first;
-		int s = tmp.second.second;
-
-		if(find_r(f) == find_r(s))
-			continue;
-		union_r(f, s);
-		rtn += tmp.first;
-	}
-
-	for(int i=1; i<=n; i++) {
-		if(p[i] == i) {
-			f++;
+			if(nx>=0 && ny>=0 && nx<m && ny<n) {
+				if(!visited[nx][ny] && a[nx][ny] == 1) {
+					q.push({nx, ny});
+					visited[nx][ny] = true;
+				}
+			}
 		}
 	}
-	if(f != 1)
-		return 0;
-	return rtn;
 }
+
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m >> k;
-	for(int i=0; i<m; i++) {
-		int aa, b;
-		cin >> aa >> b;
-		a.push_back({i+1, {aa, b}});
-	}
-	sort(a.begin(), a.end());
-
-	for(int i=0; i<k; i++) {
-		int tmp = 0;
-		bool flag = true;
-		if(flag) {
-			init(n);
-			tmp = kruskal();
-			if(tmp == 0)
-				flag = false;
-			cout << tmp << " ";
-			c++;
+	for(;;) {
+		int cnt = 0;
+		cin >> n >> m;
+		if(n == 0 && m == 0)
+			break;
+		for(int i=0; i<m; i++) {
+			for(int j=0; j<n; j++) {
+				cin >> a[i][j];
+			}
 		}
-		else {
-			cout << 0 << " ";
+		for(int i=0; i<m; i++) {
+			for(int j=0; j<n; j++) {
+				if(!visited[i][j] && a[i][j] == 1) {
+					bfs(i, j);
+					cnt++;
+				}
+			}
 		}
+		cout << cnt << "\n";
+		memset(visited, 0, sizeof(visited));
 	}
-	cout << "\n";
-
 	return 0;
 }
