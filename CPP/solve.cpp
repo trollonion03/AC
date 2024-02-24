@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	4386
+* CURRENT	: 	16202
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -13,7 +13,7 @@
 #include <cmath>
 #include <map>
 #include <vector>
-#include <queue>
+#include <deque>
 
 using namespace std;
 constexpr int INF = 0x3f3f3f3f;
@@ -25,13 +25,12 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 101
+#define MAXN 1001
 
-int n;
+int n, m, k;
 int p[MAXN];
-vector<pff> a;
-vector<pair<float, pii>> b;
-float ans = 0;
+vector<pair<int, pii>> a;
+int ans = 0, c = 0;
 
 void init(int x) {
 	for(int i=0; i<=n; i++) {
@@ -49,18 +48,18 @@ void union_r(int x, int y) {
 	x = find_r(x);
 	y = find_r(y);
 
-	if(x > y) {
-		p[x] = y;
-	}
-	else {
+	if(x < y) {
 		p[y] = x;
+	}
+	else  {
+		p[x] = y;
 	}
 }
 
-float kruskal() {
-	float rtn = 0;
-	for(int i=0; i<b.size(); i++) {
-		pair<float, pii> tmp = b[i];
+int kruskal() {
+	int rtn = 0, f = 0;
+	for(int i=c; i<a.size(); i++) {
+		pair<int, pii> tmp = a[i];
 
 		int f = tmp.second.first;
 		int s = tmp.second.second;
@@ -70,6 +69,14 @@ float kruskal() {
 		union_r(f, s);
 		rtn += tmp.first;
 	}
+
+	for(int i=1; i<=n; i++) {
+		if(p[i] == i) {
+			f++;
+		}
+	}
+	if(f != 1)
+		return 0;
 	return rtn;
 }
 
@@ -77,29 +84,30 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n;
-	init(n);
-	for(int i=0; i<n; i++) {
-		float t1, t2;
-		cin >> t1 >> t2;
-		a.push_back({t1, t2});
+	cin >> n >> m >> k;
+	for(int i=0; i<m; i++) {
+		int aa, b;
+		cin >> aa >> b;
+		a.push_back({i+1, {aa, b}});
 	}
+	sort(a.begin(), a.end());
 
-	for(int i=0; i<n; i++) {
-		for(int j=i+1; j<n; j++) {
-			pdd t1 = a[i], t2 = a[j];
-			float dst = pow(t2.first - t1.first, 2) + pow(t2.second - t1.second, 2);
-            dst = sqrtf(dst);
-			b.push_back(make_pair(dst, make_pair(i, j)));
+	for(int i=0; i<k; i++) {
+		int tmp = 0;
+		bool flag = true;
+		if(flag) {
+			init(n);
+			tmp = kruskal();
+			if(tmp == 0)
+				flag = false;
+			cout << tmp << " ";
+			c++;
+		}
+		else {
+			cout << 0 << " ";
 		}
 	}
-
-	sort(b.begin(), b.end());
-	ans = kruskal();
-
-	cout << fixed;
-	cout.precision(2);
-	cout << ans << "\n";
+	cout << "\n";
 
 	return 0;
 }
