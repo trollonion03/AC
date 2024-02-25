@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	4963
+* CURRENT	: 	1799
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -25,63 +25,53 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 51
+#define MAXN 11
 
-int t, n, m;
+int n;
+int ans[2];
 int a[MAXN][MAXN];
-bool visited[MAXN][MAXN];
-queue<pii> q;
-int dx[8] = {1, 0, -1, 0, 1, 1, -1, -1};
-int dy[8] = {0, 1, 0, -1, 1, -1, 1, -1};
+bool visited[2][MAXN*2];
+int dx[4] = {1, -1, 1, -1};
+int dy[4] = {1, -1, -1, 1};
 
-void bfs(int x, int y) {
-	q.push({x, y});
-	visited[x][y] = true;
-
-	while(!q.empty()) {
-		int cx = q.front().first;
-		int cy = q.front().second;
-		q.pop();
-
-		for(int i=0; i<8; i++) {
-			int nx = cx + dx[i];
-			int ny = cy + dy[i];
-
-			if(nx>=0 && ny>=0 && nx<m && ny<n) {
-				if(!visited[nx][ny] && a[nx][ny] == 1) {
-					q.push({nx, ny});
-					visited[nx][ny] = true;
-				}
-			}
-		}
-	}
+void setV(bool f, int a, int b) {
+	visited[0][a] = f;
+	visited[1][b] = f;
 }
 
+void check(int cnt, int clr, int x, int y) {
+	if(x >= n) {
+		y++;
+		if(x%2 == 0)
+			x = 1;
+		else x = 0;
+	}
+	if(y >= n) {
+		ans[clr] = max(cnt, ans[clr]);
+		return;
+	}
+	if(a[y][x] == 1 && !visited[0][x+y+1] && !visited[1][x-y+n]) {
+		setV(1, x+y+1, x-y+n);
+		check(cnt+1, clr, x+2, y);
+		setV(0, x+y+1, x-y+n);
+	}
+	check(cnt, clr, x+2, y);
+}
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	for(;;) {
-		int cnt = 0;
-		cin >> n >> m;
-		if(n == 0 && m == 0)
-			break;
-		for(int i=0; i<m; i++) {
-			for(int j=0; j<n; j++) {
-				cin >> a[i][j];
-			}
+	cin >> n;
+	for(int i=0; i<n; i++) {
+		for(int j=0; j<n; j++) {
+			cin >> a[i][j];
 		}
-		for(int i=0; i<m; i++) {
-			for(int j=0; j<n; j++) {
-				if(!visited[i][j] && a[i][j] == 1) {
-					bfs(i, j);
-					cnt++;
-				}
-			}
-		}
-		cout << cnt << "\n";
-		memset(visited, 0, sizeof(visited));
 	}
+
+	check(0, 0, 0, 0);
+	check(0, 1, 1, 0);
+
+	cout << ans[0]+ans[1] << "\n";
 	return 0;
 }
