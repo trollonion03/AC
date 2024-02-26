@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1799
+* CURRENT	: 	14621
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -25,53 +25,76 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 11
+#define MAXN 1001
 
-int n;
-int ans[2];
-int a[MAXN][MAXN];
-bool visited[2][MAXN*2];
-int dx[4] = {1, -1, 1, -1};
-int dy[4] = {1, -1, -1, 1};
+int n, m;
+int p[MAXN];
+char prop[MAXN];
+vector<pip> a;
 
-void setV(bool f, int a, int b) {
-	visited[0][a] = f;
-	visited[1][b] = f;
+void init(size_t size) {
+	for(int i=0; i<=size; i++) {
+		p[i] = i;
+	}
 }
 
-void check(int cnt, int clr, int x, int y) {
-	if(x >= n) {
-		y++;
-		if(x%2 == 0)
-			x = 1;
-		else x = 0;
-	}
-	if(y >= n) {
-		ans[clr] = max(cnt, ans[clr]);
-		return;
-	}
-	if(a[y][x] == 1 && !visited[0][x+y+1] && !visited[1][x-y+n]) {
-		setV(1, x+y+1, x-y+n);
-		check(cnt+1, clr, x+2, y);
-		setV(0, x+y+1, x-y+n);
-	}
-	check(cnt, clr, x+2, y);
+int find_r(int x) {
+	if(x == p[x])
+		return x;
+	return p[x] = find_r(p[x]);
 }
+
+void union_r(int x, int y) {
+	x = find_r(x);
+	y = find_r(y);
+
+	if(x < y) 
+		p[x] = y;
+	else
+		p[y] = x;
+}
+
+pii kruskal() {
+	int ans = 0, f = 0;
+	for(int i=0; i<a.size(); i++) {
+		pip cur = a[i];
+		int x = cur.second.first;
+		int y = cur.second.second;
+
+		if(find_r(x) == find_r(y))
+			continue;
+		
+		union_r(x, y);
+		f++;
+		ans += cur.first;
+	}
+	return {ans, f};
+}
+
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n;
-	for(int i=0; i<n; i++) {
-		for(int j=0; j<n; j++) {
-			cin >> a[i][j];
-		}
+	cin >> n >> m;
+	init(n);
+	for(int i=1; i<=n; i++) {
+		cin >> prop[i];
 	}
+	for(int i=0; i<m; i++) {
+		int u, v, d;
+		cin >> u >> v >> d;
 
-	check(0, 0, 0, 0);
-	check(0, 1, 1, 0);
+		if(prop[u] != prop[v])
+			a.push_back({d, {u, v}});
+	}
+	sort(a.begin(), a.end());
+	pii ans = kruskal();
+	if(ans.second != n-1) {
+		cout << -1 << "\n";
+		return 0;
+	}
+	cout << ans.first << "\n";
 
-	cout << ans[0]+ans[1] << "\n";
 	return 0;
 }
