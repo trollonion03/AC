@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	14621
+* CURRENT	: 	13418
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -49,13 +49,14 @@ void union_r(int x, int y) {
 	y = find_r(y);
 
 	if(x < y) 
-		p[x] = y;
-	else
 		p[y] = x;
+	else
+		p[x] = y;
 }
 
-pii kruskal() {
-	int ans = 0, f = 0;
+
+int kruskal() {
+	int c = 0, f = 0;
 	for(int i=0; i<a.size(); i++) {
 		pip cur = a[i];
 		int x = cur.second.first;
@@ -65,10 +66,13 @@ pii kruskal() {
 			continue;
 		
 		union_r(x, y);
+		if(cur.first == 0)
+			c++;
 		f++;
-		ans += cur.first;
+		if(f == n)
+			break;
 	}
-	return {ans, f};
+	return c*c;
 }
 
 
@@ -77,24 +81,20 @@ int main() {
 	cin.tie(0); cout.tie(0);
 
 	cin >> n >> m;
-	init(n);
-	for(int i=1; i<=n; i++) {
-		cin >> prop[i];
-	}
-	for(int i=0; i<m; i++) {
+	for(int i=0; i<m+1; i++) {
 		int u, v, d;
-		cin >> u >> v >> d;
-
-		if(prop[u] != prop[v])
-			a.push_back({d, {u, v}});
+		cin >> u >> v >> d;	
+		a.push_back({d, {u, v}});
 	}
+
+	init(n);
 	sort(a.begin(), a.end());
-	pii ans = kruskal();
-	if(ans.second != n-1) {
-		cout << -1 << "\n";
-		return 0;
-	}
-	cout << ans.first << "\n";
+	int ans1 = kruskal();
 
+	init(n);
+	sort(a.begin(), a.end(), greater<>());
+	int ans2 = kruskal();
+	
+	cout << ans1 - ans2 << "\n";
 	return 0;
 }
