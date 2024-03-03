@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	17490
+* CURRENT	: 	1414
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -27,13 +27,11 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 1000002
+#define MAXN 51
 
-int n, m;
-ll k, ans;
-int u, v;
+int n, len = 0;
+char c;
 int p[MAXN];
-bool cut[MAXN];
 vector<pip> a;
 
 void init(size_t size) {
@@ -49,8 +47,8 @@ int find_r(int x) {
 }
 
 bool isGraph() {
-	for(int i=2; i<=n; i++) {
-		if(find_r(i) != find_r(1)) {
+	for(int i=1; i<n; i++) {
+		if(find_r(i) != find_r(0)) {
 			return false;
 		}
 	}
@@ -61,19 +59,14 @@ void union_r(int x, int y) {
 	x = find_r(x);
 	y = find_r(y);
 
-	if(x == 0 || (x == n && y == 1)) {
-		p[x] = y;
-		return;
-	}
-	
 	if(x < y) 
 		p[y] = x;
 	else
 		p[x] = y;
 }
 
-ll kruskal() {
-	ll rtn = 0;
+int kruskal() {
+	int rtn = 0;
 	for(int i=0; i<a.size(); i++) {
 		pip cur = a[i];
 		int x = cur.second.first;
@@ -91,57 +84,29 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m >> k;
-	if(m <= 1) {
-		cout << "YES\n";
-		return 0;
+	cin >> n;
+	for(int i=0; i<n; i++) {
+		for(int j=0; j<n; j++) {
+			cin >> c;
+			if(c == '0')
+				continue;
+			if(c >= 'a' && c <= 'z'){
+				a.push_back({c-'a'+1, {i, j}});
+				len += (c - 'a' + 1);
+			}
+			else{
+				a.push_back({c-'A'+27, {i, j}});
+				len += (c - 'A' + 27);
+			}
+		}
 	}
 	init(n);
-	for(int i=1; i<=n; i++) {
-		cin >> u;
-		a.push_back({u, {0, i}}); //와우도를 0번 노드로 지정
-	}
-
-	for(int i=0; i<n; i++) {
-		cin >> u >> v;
-
-		//강의실이 원형으로 되어있음을 고려
-		if(u == n && v == 1) {
-			cut[u] = true;
-			continue;
-		}
-		else if(u == 1 && v == n) {
-			cut[v] = true;
-			continue;
-		}
-
-		if(u<v)
-			cut[u] = true;
-		else
-			cut[v] = true;
-		
-	}
-	for(int i=1; i<n; i++) {
-		if(!cut[i]) {
-			union_r(i, i+1);
-		}
-	}
-
-	// n번째 노드와 1번째 노드를 연결
-	// 만약에 공사중이면 제외
-	if(!cut[n])
-		union_r(n, 1);
-
-	if(!isGraph()) {
-		sort(a.begin(), a.end());
-		ans = kruskal();
-		//다리 가설 이후 모든 노드가 연결되었는지 확인
-		if(ans <= k && isGraph()) {
-			cout << "YES\n";
-			return 0;
-		}
-	}
-	cout << "NO\n";
+	sort(a.begin(), a.end());
+	int ans = kruskal();
+	if(isGraph())
+		cout << len - ans << "\n";
+	else
+		cout << -1 << "\n";
 
 	return 0;
 }
