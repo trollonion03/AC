@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1414
+* CURRENT	: 	14950
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -27,10 +27,10 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 51
+#define MAXN 10005
 
-int n, len = 0;
-char c;
+int n, m, t;
+int z = 0;
 int p[MAXN];
 vector<pip> a;
 
@@ -65,8 +65,8 @@ void union_r(int x, int y) {
 		p[x] = y;
 }
 
-int kruskal() {
-	int rtn = 0;
+ll kruskal() {
+	ll rtn = 0;
 	for(int i=0; i<a.size(); i++) {
 		pip cur = a[i];
 		int x = cur.second.first;
@@ -75,7 +75,8 @@ int kruskal() {
 		if(find_r(x) == find_r(y))
 			continue;
 		union_r(x, y);
-		rtn += cur.first;
+		rtn += (cur.first+t*z);
+		z++;
 	}
 	return rtn;
 }
@@ -84,29 +85,17 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n;
-	for(int i=0; i<n; i++) {
-		for(int j=0; j<n; j++) {
-			cin >> c;
-			if(c == '0')
-				continue;
-			if(c >= 'a' && c <= 'z'){
-				a.push_back({c-'a'+1, {i, j}});
-				len += (c - 'a' + 1);
-			}
-			else{
-				a.push_back({c-'A'+27, {i, j}});
-				len += (c - 'A' + 27);
-			}
-		}
+	cin >> n >> m >> t;
+	for(int i=0; i<m; i++) {
+		int u, v, w;
+		cin >> u >> v >> w;
+		a.push_back({w, {u, v}});
 	}
-	init(n);
-	sort(a.begin(), a.end());
-	int ans = kruskal();
-	if(isGraph())
-		cout << len - ans << "\n";
-	else
-		cout << -1 << "\n";
 
+	sort(a.begin(), a.end());
+	init(n);
+	ll ans = kruskal();
+	cout << ans << "\n";
+	
 	return 0;
 }
