@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	14950
+* CURRENT	: 	6497
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -27,10 +27,10 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 10005
+#define MAXN 200010
 
-int n, m, t;
-int z = 0;
+int n, m;
+int t = 0;
 int p[MAXN];
 vector<pip> a;
 
@@ -65,8 +65,8 @@ void union_r(int x, int y) {
 		p[x] = y;
 }
 
-ll kruskal() {
-	ll rtn = 0;
+int kruskal() {
+	int rtn = 0;
 	for(int i=0; i<a.size(); i++) {
 		pip cur = a[i];
 		int x = cur.second.first;
@@ -75,8 +75,7 @@ ll kruskal() {
 		if(find_r(x) == find_r(y))
 			continue;
 		union_r(x, y);
-		rtn += (cur.first+t*z);
-		z++;
+		rtn += cur.first;
 	}
 	return rtn;
 }
@@ -85,17 +84,23 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n >> m >> t;
-	for(int i=0; i<m; i++) {
-		int u, v, w;
-		cin >> u >> v >> w;
-		a.push_back({w, {u, v}});
-	}
+	while (true) {
+		cin >> n >> m;
+		if(n == 0 && m == 0)
+			break;
+		for(int i=0; i<m; i++) {
+			int u, v, w;
+			cin >> u >> v >> w;
+			t += w;
+			a.push_back({w, {u, v}});
+		}
 
-	sort(a.begin(), a.end());
-	init(n);
-	ll ans = kruskal();
-	cout << ans << "\n";
-	
+		sort(a.begin(), a.end());
+		init(n);
+		int ans = t - kruskal();
+		cout << ans << "\n";
+		a.clear();
+		t = 0;
+	}
 	return 0;
 }
