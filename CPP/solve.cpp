@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	6497
+* CURRENT	: 	14167
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -27,17 +27,22 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 200010
+#define MAXN 1001
 
 int n, m;
 int t = 0;
 int p[MAXN];
 vector<pip> a;
+vector<pii> cow;
 
 void init(size_t size) {
 	for(int i=0; i<=size+1; i++) {
 		p[i] = i;
 	}
+}
+
+long double getDist(pii p1, pii p2) {
+	return pow(p1.first-p2.first, 2) + pow(p1.second-p2.second, 2);
 }
 
 int find_r(int x) {
@@ -75,7 +80,7 @@ int kruskal() {
 		if(find_r(x) == find_r(y))
 			continue;
 		union_r(x, y);
-		rtn += cur.first;
+		rtn = max(rtn, cur.first);
 	}
 	return rtn;
 }
@@ -84,23 +89,25 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	while (true) {
-		cin >> n >> m;
-		if(n == 0 && m == 0)
-			break;
-		for(int i=0; i<m; i++) {
-			int u, v, w;
-			cin >> u >> v >> w;
-			t += w;
-			a.push_back({w, {u, v}});
-		}
-
-		sort(a.begin(), a.end());
-		init(n);
-		int ans = t - kruskal();
-		cout << ans << "\n";
-		a.clear();
-		t = 0;
+	cin >> n;
+	for(int i=0; i<n; i++) {
+		int u, v;
+		cin >> u >> v;
+		cow.push_back({u, v});
 	}
+	for(int i=0; i<n-1; i++) {
+		pii c1 = cow[i]; 
+		for(int j=i+1; j<n; j++) {
+			pii c2 = cow[j];
+			int dist = getDist(c1, c2);
+			a.push_back({dist, {i, j}});
+		}
+	}
+
+	sort(a.begin(), a.end());
+	init(n);
+	int ans = kruskal();
+	cout << ans << "\n";
+
 	return 0;
 }
