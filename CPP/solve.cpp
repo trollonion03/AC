@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	14167
+* CURRENT	: 	10021
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -23,17 +23,18 @@ typedef unsigned long long ull;
 
 #define pii pair<int, int>
 #define pip pair<int, pii>
+#define plp pair<ll, pii>
 #define pldp pair<long double, pii>
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 1001
+#define MAXN 2001
 
 int n, m;
 int t = 0;
 int p[MAXN];
-vector<pip> a;
-vector<pii> cow;
+vector<plp> a;
+vector<pii> pnt;
 
 void init(size_t size) {
 	for(int i=0; i<=size+1; i++) {
@@ -41,7 +42,7 @@ void init(size_t size) {
 	}
 }
 
-long double getDist(pii p1, pii p2) {
+ll getDist(pii p1, pii p2) {
 	return pow(p1.first-p2.first, 2) + pow(p1.second-p2.second, 2);
 }
 
@@ -70,18 +71,23 @@ void union_r(int x, int y) {
 		p[x] = y;
 }
 
-int kruskal() {
-	int rtn = 0;
+ll kruskal() {
+	ll rtn = 0, cnt = 0;
 	for(int i=0; i<a.size(); i++) {
-		pip cur = a[i];
+		plp cur = a[i];
 		int x = cur.second.first;
 		int y = cur.second.second;
 		
 		if(find_r(x) == find_r(y))
 			continue;
 		union_r(x, y);
-		rtn = max(rtn, cur.first);
+		rtn += cur.first;
+		cnt++;
+		if(cnt == n-1)
+			break;
 	}
+	if(cnt != n-1)
+		return -1;
 	return rtn;
 }
 
@@ -89,24 +95,25 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
-	cin >> n;
+	cin >> n >> m;
 	for(int i=0; i<n; i++) {
 		int u, v;
 		cin >> u >> v;
-		cow.push_back({u, v});
+		pnt.push_back({u, v});
 	}
 	for(int i=0; i<n-1; i++) {
-		pii c1 = cow[i]; 
+		pii c1 = pnt[i]; 
 		for(int j=i+1; j<n; j++) {
-			pii c2 = cow[j];
-			int dist = getDist(c1, c2);
-			a.push_back({dist, {i, j}});
+			pii c2 = pnt[j];
+			ll dist = getDist(c1, c2);
+			if(dist >= m)
+				a.push_back({dist, {i, j}});
 		}
 	}
 
 	sort(a.begin(), a.end());
 	init(n);
-	int ans = kruskal();
+	ll ans = kruskal();
 	cout << ans << "\n";
 
 	return 0;
