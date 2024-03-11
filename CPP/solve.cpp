@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	10021
+* CURRENT	: 	4792
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -30,11 +30,10 @@ typedef unsigned long long ull;
 #define NOP ;
 #define MAXN 2001
 
-int n, m;
+int n, m, k;
 int t = 0;
 int p[MAXN];
-vector<plp> a;
-vector<pii> pnt;
+vector<pip> a;
 
 void init(size_t size) {
 	for(int i=0; i<=size+1; i++) {
@@ -71,10 +70,10 @@ void union_r(int x, int y) {
 		p[x] = y;
 }
 
-ll kruskal() {
-	ll rtn = 0, cnt = 0;
+int kruskal() {
+	int rtn = 0;
 	for(int i=0; i<a.size(); i++) {
-		plp cur = a[i];
+		pip cur = a[i];
 		int x = cur.second.first;
 		int y = cur.second.second;
 		
@@ -82,39 +81,42 @@ ll kruskal() {
 			continue;
 		union_r(x, y);
 		rtn += cur.first;
-		cnt++;
-		if(cnt == n-1)
-			break;
 	}
-	if(cnt != n-1)
-		return -1;
 	return rtn;
 }
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
-
-	cin >> n >> m;
-	for(int i=0; i<n; i++) {
-		int u, v;
-		cin >> u >> v;
-		pnt.push_back({u, v});
-	}
-	for(int i=0; i<n-1; i++) {
-		pii c1 = pnt[i]; 
-		for(int j=i+1; j<n; j++) {
-			pii c2 = pnt[j];
-			ll dist = getDist(c1, c2);
-			if(dist >= m)
-				a.push_back({dist, {i, j}});
+	
+	while(true) {
+		cin >> n >> m >> k;
+		if(n == 0 && m == 0 && k == 0)
+			break;
+		for(int i=0; i<m; i++) {
+			int u, v;
+			char ch;
+			int cst;
+			cin >> ch >> u >> v;
+			if(ch == 'R') cst = 0;
+			else cst = 1;
+			a.push_back({cst, {u, v}});
 		}
+
+		sort(a.begin(), a.end());
+		init(n);
+		int minv = kruskal();
+		
+		sort(a.begin(), a.end(), greater<>());
+		init(n);
+		int maxv = kruskal();
+
+		if(k >= minv && k <= maxv)
+			cout << 1 << "\n";
+		else
+			cout << 0 << "\n";
+
+		a.clear();
 	}
-
-	sort(a.begin(), a.end());
-	init(n);
-	ll ans = kruskal();
-	cout << ans << "\n";
-
 	return 0;
 }
