@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	4792
+* CURRENT	: 	10423
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -34,6 +34,7 @@ int n, m, k;
 int t = 0;
 int p[MAXN];
 vector<pip> a;
+vector<int> cts;
 
 void init(size_t size) {
 	for(int i=0; i<=size+1; i++) {
@@ -89,34 +90,26 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 	
-	while(true) {
-		cin >> n >> m >> k;
-		if(n == 0 && m == 0 && k == 0)
-			break;
-		for(int i=0; i<m; i++) {
-			int u, v;
-			char ch;
-			int cst;
-			cin >> ch >> u >> v;
-			if(ch == 'R') cst = 0;
-			else cst = 1;
-			a.push_back({cst, {u, v}});
-		}
-
-		sort(a.begin(), a.end());
-		init(n);
-		int minv = kruskal();
-		
-		sort(a.begin(), a.end(), greater<>());
-		init(n);
-		int maxv = kruskal();
-
-		if(k >= minv && k <= maxv)
-			cout << 1 << "\n";
-		else
-			cout << 0 << "\n";
-
-		a.clear();
+	cin >> n >> m >> k;
+	for(int i=0; i<k; i++) {
+		int ct;
+		cin >> ct;
+		cts.push_back(ct);
+	}	
+	for(int i=0; i<m; i++) {
+		int u, v, w;
+		cin >> u >> v >> w;
+		a.push_back({w, {u, v}});
 	}
+
+	init(n);
+	for(int i=1; i<cts.size(); i++) {
+		union_r(cts[0], cts[i]);
+	}
+ 
+	sort(a.begin(), a.end());
+	int ans = kruskal();
+	cout << ans << "\n";
+
 	return 0;
 }
