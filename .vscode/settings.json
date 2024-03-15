@@ -11,7 +11,8 @@
         "vector": "cpp",
         "random": "cpp",
         "cstring": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "iomanip": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
