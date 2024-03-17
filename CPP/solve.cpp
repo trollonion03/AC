@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	2406
+* CURRENT	: 	1833
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -29,17 +29,11 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 1001
+#define MAXN 201
 
-int n, m;
-int u, v;
-int t = 0;
+int n, u;
+ll cst = 0;
 int p[MAXN];
-#if TEST
-unordered_map<int, int> con;
-#else
-bool con[MAXN][MAXN];
-#endif
 vector<pip> a;
 vector<pii> ans;
 
@@ -78,8 +72,8 @@ void union_r(int x, int y) {
 		p[x] = y;
 }
 
-int kruskal() {
-	int rtn = 0;
+ll kruskal() {
+	ll rtn = 0;
 	for(int i=0; i<a.size(); i++) {
 		pip cur = a[i];
 		int x = cur.second.first;
@@ -90,8 +84,6 @@ int kruskal() {
 		union_r(x, y);
         ans.push_back({x, y});
 		rtn += cur.first;
-        if(isGraph())
-            break;
 	}
 	return rtn;
 }
@@ -100,47 +92,27 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 	
-	cin >> n >> m;
+	cin >> n;
     init(n);
-    for(int i=0; i<m; i++) {
-        cin >> u >> v;
-#if TEST
-        con.insert({u, v});
-        con.insert({v, u});
-#else
-        con[u][v] = 1;
-        con[v][u] = 1;
-#endif
-        union_r(u, v);
-    }
     for(int i=1; i<=n; i++) {
         for(int j=1; j<=n; j++) {
             cin >> u;
-            if(i==1||j==1) 
-                continue;
-#if TEST
-            if(con.find(i) != con.end() && con[i] == j) {
-                continue;
+            if(u < 0) {
+                if(i < j) {
+                    union_r(i, j);
+                    cst -= u;
+                }
             }
-            if(con.find(j) != con.end() && con[j] == i) {
-                continue;
-            }
-#else
-            if(con[i][j])
-                continue;
-#endif
-            if(find_r(i) != find_r(j)) {
+            else if(find_r(i) != find_r(j))
                 a.push_back({u, {i, j}});
-                // cout << u << " " << i << " " << j << endl;
-            }
         }
     }
 
     sort(a.begin(), a.end());
-    int cst = kruskal();
+    cst += kruskal();
     cout << cst << " " << ans.size() << "\n";
     for(int i=0; i<ans.size(); i++) {
-        cout << ans[i].second << " " << ans[i].first << "\n";
+        cout << ans[i].first << " " << ans[i].second << "\n";
     }
 	return 0;
 }
