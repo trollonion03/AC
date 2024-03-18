@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	1833
+* CURRENT	: 	9095
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -29,90 +29,27 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 201
+#define MAXN 12
 
-int n, u;
-ll cst = 0;
-int p[MAXN];
-vector<pip> a;
-vector<pii> ans;
-
-void init(size_t size) {
-	for(int i=0; i<=size+1; i++) {
-		p[i] = i;
-	}
-}
-
-ll getDist(pii p1, pii p2) {
-	return pow(p1.first-p2.first, 2) + pow(p1.second-p2.second, 2);
-}
-
-int find_r(int x) {
-	if(x == p[x])
-		return x;
-	return p[x] = find_r(p[x]);
-}
-
-bool isGraph() {
-	for(int i=1; i<n; i++) {
-		if(find_r(i) != find_r(0)) {
-			return false;
-		}
-	}
-	return true;
-}
-
-void union_r(int x, int y) {
-	x = find_r(x);
-	y = find_r(y);
-
-	if(x < y) 
-		p[y] = x;
-	else
-		p[x] = y;
-}
-
-ll kruskal() {
-	ll rtn = 0;
-	for(int i=0; i<a.size(); i++) {
-		pip cur = a[i];
-		int x = cur.second.first;
-		int y = cur.second.second;
-		
-		if(find_r(x) == find_r(y))
-			continue;
-		union_r(x, y);
-        ans.push_back({x, y});
-		rtn += cur.first;
-	}
-	return rtn;
-}
+int t, n;
+int dp[MAXN];
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 	
-	cin >> n;
-    init(n);
-    for(int i=1; i<=n; i++) {
-        for(int j=1; j<=n; j++) {
-            cin >> u;
-            if(u < 0) {
-                if(i < j) {
-                    union_r(i, j);
-                    cst -= u;
-                }
-            }
-            else if(find_r(i) != find_r(j))
-                a.push_back({u, {i, j}});
-        }
-    }
+	cin >> t;
+	dp[1] = 1;
+	dp[2] = 2;
+	dp[3] = 4;
+	for(int i=4; i<12; i++) {
+		dp[i] = dp[i-1] + dp[i-2] + dp[i-3];
+	}
 
-    sort(a.begin(), a.end());
-    cst += kruskal();
-    cout << cst << " " << ans.size() << "\n";
-    for(int i=0; i<ans.size(); i++) {
-        cout << ans[i].first << " " << ans[i].second << "\n";
-    }
+	while(t--) {
+		cin >> n;
+		cout << dp[n] << "\n";	
+ 	}
+	
 	return 0;
 }
