@@ -1,5 +1,5 @@
 /**************************************************************
-* CURRENT	: 	11726
+* CURRENT	: 	9461
 * NEXT 		: 	NULL
 ***************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -29,24 +29,25 @@ typedef unsigned long long ull;
 #define pdd pair<double, double>
 #define pff pair<float, float>
 #define NOP ;
-#define MAXN 10007
+#define MAXN 111
 
-int n;
-int dp[MAXN];
+int t, n;
+ll dp[MAXN];
 
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 	
-	cin >> n;
-	dp[1] = 1;
-	dp[2] = 2;
-	for(int i=3; i<=n; i++) {
-		dp[i] = dp[i-1] + dp[i-2];
-		dp[i] %= MAXN;
+	cin >> t;
+	while(t--) {
+		cin >> n;
+		for(int i=1; i<=3; i++)
+			dp[i] = 1;
+		dp[4] = dp[5] = 2;
+		for(int i=6; i<=n; i++) {
+			dp[i] = dp[i-1] + dp[i-5];
+		}
+		cout << dp[n] << "\n";
 	}
-
-	cout << dp[n] << "\n";
-	
 	return 0;
 }
